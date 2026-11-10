@@ -1,0 +1,659 @@
+{
+  "@@locale": "ar",
+  "appName": "ثبات",
+  "appNameLatin": "Thabat",
+  "tagline": "خطوة ثابتة كل يوم",
+  "continueWithGoogle": "المتابعة باستخدام Google",
+  "signInNewHint": "جديد هنا؟ الزر نفسه ينشئ حسابك.",
+  "signInPrivacy": "بالمتابعة، أنت توافق على الشروط وسياسة الخصوصية.\nنستخدم فقط اسمك وبريدك الإلكتروني وصورتك.",
+  "langArabic": "العربية",
+  "langEnglish": "English",
+  "langFrench": "Français",
+  "tabToday": "اليوم",
+  "tabProgress": "التقدم",
+  "tabAchievements": "الإنجازات",
+  "tabProfile": "حسابي",
+  "addHabit": "إضافة عادة",
+  "greetingMorning": "صباح الخير، {name}",
+  "@greetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingAfternoon": "مساء الخير، {name}",
+  "@greetingAfternoon": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingEvening": "مساء الخير، {name}",
+  "@greetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeName": "أهلًا بك، {name}",
+  "@welcomeName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "build": "أبني",
+  "avoid": "أتجنب",
+  "habitTypeFilter": "نوع العادات",
+  "buildHead": "عادات أبنيها",
+  "avoidHead": "عادات أتجنبها",
+  "ringTitle": "{done} من {total} مكتملة اليوم",
+  "@ringTitle": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "ringLeft": "{count, plural, =0{يوم مثالي. أنجزت كل عاداتك.} =1{عادة واحدة متبقية. نقرة واحدة تكفي.} =2{عادتان متبقيتان. نقرة واحدة لكل منهما.} few{{count} عادات متبقية. نقرة واحدة لكل منها.} other{{count} عادة متبقية. نقرة واحدة لكل منها.}}",
+  "@ringLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ringNothingDue": "لا عادات مستحقة اليوم. استمتع بيومك.",
+  "doneOf": "{done} من {total} مكتملة",
+  "@doneOf": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cleanOf": "{done} من {total} بدون تعثر",
+  "@cleanOf": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "freqDaily": "يومي",
+  "freqWeekly": "أسبوعي",
+  "freqMonthly": "شهري",
+  "daysCount": "{count, plural, =0{0 يوم} =1{يوم واحد} =2{يومان} few{{count} أيام} other{{count} يوم}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weeksCount": "{count, plural, =0{0 أسبوع} =1{أسبوع واحد} =2{أسبوعان} few{{count} أسابيع} other{{count} أسبوع}}",
+  "@weeksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthsCount": "{count, plural, =0{0 شهر} =1{شهر واحد} =2{شهران} few{{count} أشهر} other{{count} شهر}}",
+  "@monthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timesCount": "{count, plural, =1{مرة واحدة} =2{مرتان} few{{count} مرات} other{{count} مرة}}",
+  "@timesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysClean": "{days} بدون",
+  "@daysClean": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "freshStart": "اليوم 0 · بداية جديدة",
+  "done": "تم",
+  "slip": "تعثرت",
+  "undo": "تراجع",
+  "skip": "تخطي",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "close": "إغلاق",
+  "weekProgress": "{done} من {target} هذا الأسبوع",
+  "@weekProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "monthProgress": "{done} من {target} هذا الشهر",
+  "@monthProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "markDoneA11y": "تسجيل: {name}",
+  "@markDoneA11y": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undoA11y": "تراجع: {name}",
+  "@undoA11y": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "slipConfirmTitle": "تعثرت في «{name}»؟",
+  "@slipConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "slipConfirmBody": "لا بأس، هذا يحدث. سيبدأ العد من جديد، وتبقى أيامك السابقة في سجلك.",
+  "slipConfirmYes": "نعم، سجّل التعثر",
+  "slippedSnack": "سُجّل. أيامك الـ{count} السابقة ما زالت تُحسب. اليوم 1 يبدأ الآن.",
+  "@slippedSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "skippedSnack": "تخطيت اليوم. سلسلتك محفوظة.",
+  "deletedSnack": "حُذفت «{name}»",
+  "@deletedSnack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyTitle": "خطوتك الأولى تبدأ هنا",
+  "emptyBody": "اختر شيئًا صغيرًا تبنيه، أو عادة تريد تركها. يمكنك إضافة المزيد لاحقًا.",
+  "emptyCta": "أنشئ عادتك الأولى",
+  "emptyOr": "أو ابدأ بعادة شائعة",
+  "emptyTabBuild": "لا عادات تبنيها بعد.",
+  "emptyTabAvoid": "لا عادات تتجنبها بعد.",
+  "newHabit": "عادة جديدة",
+  "editHabit": "تعديل العادة",
+  "typeGoodTitle": "عادة أبنيها",
+  "typeGoodSub": "شيء أريد فعله بانتظام",
+  "typeBadTitle": "عادة أتجنبها",
+  "typeBadSub": "شيء أريد التوقف عنه",
+  "nameLabel": "الاسم",
+  "nameHintGood": "مثال: قراءة 20 دقيقة",
+  "nameHintBad": "مثال: المشروبات الغازية",
+  "nameRequired": "اكتب اسمًا للعادة",
+  "nameTooLong": "الاسم طويل جدًا (40 حرفًا كحد أقصى)",
+  "iconLabel": "الأيقونة",
+  "iconsTab": "أيقونات",
+  "emojiTab": "إيموجي",
+  "colorLabel": "اللون",
+  "colorTeal": "أخضر مزرق",
+  "colorBlue": "أزرق",
+  "colorPurple": "بنفسجي",
+  "colorCoral": "مرجاني",
+  "colorAmber": "كهرماني",
+  "colorPink": "وردي",
+  "frequencyLabel": "التكرار",
+  "weeklyTimes": "عدد مرات في الأسبوع",
+  "weeklyDays": "أيام محددة",
+  "perWeek": "في الأسبوع",
+  "perMonth": "في الشهر",
+  "pickDaysError": "اختر يومًا واحدًا على الأقل",
+  "more": "أكثر",
+  "less": "أقل",
+  "goalLabel": "الهدف",
+  "goalNone": "بدون",
+  "goalHelpGood": "سلسلة تريد الوصول إليها",
+  "goalHelpBad": "مدة تريد البقاء فيها بدون تعثر",
+  "reminderLabel": "تذكير",
+  "reminderTime": "الوقت",
+  "reminderDays": "الأيام",
+  "reminderMessage": "نص التذكير",
+  "reminderPreview": "معاينة الإشعار",
+  "reminderDefaultGood": "حان وقت «{name}». نقرة واحدة تكفي.",
+  "@reminderDefaultGood": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDefaultBad": "كيف حالك مع «{name}» اليوم؟ أنت أقوى مما تظن.",
+  "@reminderDefaultBad": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderQuietWarning": "هذا الوقت ضمن ساعات الهدوء، لن يُرسل التذكير.",
+  "noteLabel": "لماذا هذه العادة مهمة لي",
+  "optional": "(اختياري)",
+  "createHabit": "إنشاء العادة",
+  "saveChanges": "حفظ التغييرات",
+  "deleteHabit": "حذف العادة",
+  "deleteConfirmTitle": "حذف «{name}»؟",
+  "@deleteConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteConfirmBody": "سيتم حذف العادة وكل سجلها.",
+  "permissionDenied": "الإشعارات معطّلة. فعّلها من إعدادات الجهاز لتصلك التذكيرات.",
+  "everyDay": "كل يوم",
+  "wd1": "ن",
+  "wd2": "ث",
+  "wd3": "ر",
+  "wd4": "خ",
+  "wd5": "ج",
+  "wd6": "س",
+  "wd7": "ح",
+  "back": "رجوع",
+  "reminderSettingsA11y": "إعدادات التذكير",
+  "streakLabelDays": "أيام متتالية",
+  "streakLabelWeeks": "أسابيع متتالية",
+  "streakLabelMonths": "أشهر متتالية",
+  "streakLabelClean": "أيام بدون",
+  "bestStreak": "أفضل سلسلة",
+  "successRate": "نسبة النجاح",
+  "totalCheckins": "تسجيلات",
+  "totalCleanDays": "يوم بدون",
+  "prevMonth": "الشهر السابق",
+  "nextMonth": "الشهر التالي",
+  "legendDone": "تم",
+  "legendClean": "بدون",
+  "legendMissed": "فائت",
+  "legendSlipped": "تعثر",
+  "legendSkipped": "تخطي",
+  "todayLabel": "اليوم",
+  "goalTitleStreak": "الهدف: سلسلة {x}",
+  "@goalTitleStreak": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "goalTitleAvoid": "الهدف: التجنب لمدة {x}",
+  "@goalTitleAvoid": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "goalTitleTotal": "الهدف: {x} إجمالًا",
+  "@goalTitleTotal": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "goalRemaining": "بقي {x} للوصول إلى هدفك. الليلة تُحسب.",
+  "@goalRemaining": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "goalReachedMsg": "وصلت إلى هدفك! خطوة ثابتة بعد خطوة.",
+  "noGoal": "لا هدف بعد. أضف هدفًا لتتابع تقدمك.",
+  "addGoal": "أضف هدفًا",
+  "recentActivity": "النشاط الأخير",
+  "historyClean": "يوم بدون",
+  "historyLoggedAt": "سُجّل الساعة {time}",
+  "@historyLoggedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "historySlipNote": "بداية جديدة في الصباح التالي.",
+  "historyMissNote": "يحدث ذلك. ابدأ من جديد اليوم.",
+  "noHistory": "لا نشاط بعد.",
+  "filterLabel": "تصفية",
+  "filterAll": "الكل",
+  "filterGood": "جيدة",
+  "filterBad": "سيئة",
+  "cardTotalHabits": "إجمالي العادات",
+  "cardGoodHabits": "عادات أبنيها",
+  "cardBadHabits": "عادات أتجنبها",
+  "cardLongestStreak": "أطول سلسلة",
+  "cardLongestClean": "أطول فترة بدون",
+  "cardDaysClean": "أيام بدون",
+  "cardCheckins": "تسجيلات",
+  "cardCompletion": "نسبة الإنجاز",
+  "cardCommitment": "نسبة الالتزام",
+  "noteSplit": "{good} أبنيها · {bad} أتجنبها",
+  "@noteSplit": {
+    "placeholders": {
+      "good": {
+        "type": "String"
+      },
+      "bad": {
+        "type": "String"
+      }
+    }
+  },
+  "noteCurrentRuns": "مجموع الفترات الحالية",
+  "noteThisMonth": "هذا الشهر",
+  "noteLast30": "آخر 30 يومًا",
+  "last7Days": "آخر 7 أيام",
+  "average": "المتوسط",
+  "monthlyCompletion": "الإنجاز الشهري",
+  "trendPoints": "{delta} نقطة منذ {month}",
+  "@trendPoints": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "noData": "لا بيانات بعد. سجّل عاداتك وسيظهر تقدمك هنا.",
+  "unlockedCount": "{n} من {total} مفتوحة",
+  "@unlockedCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "nextBadge": "التالي: {name}",
+  "@nextBadge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "allUnlocked": "فتحت كل الشارات! 🎉",
+  "unlockedSection": "مفتوحة",
+  "lockedSection": "مقفلة",
+  "unlockedOn": "فُتحت في {date}",
+  "@unlockedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lockedA11y": "مقفلة",
+  "badgeFirstStep": "أول خطوة",
+  "badgeFirstStepDesc": "سجّل أول عادة لك.",
+  "badgeWeekComplete": "أسبوع كامل",
+  "badgeWeekCompleteDesc": "7 أيام متتالية لعادة يومية.",
+  "badgePerfectWeek": "أسبوع مثالي",
+  "badgePerfectWeekDesc": "أنجز كل عاداتك المستحقة لأسبوع كامل.",
+  "badgeClean21": "3 أسابيع بدون",
+  "badgeClean21Desc": "21 يومًا دون تعثر في عادة تتجنبها.",
+  "badgeComeback": "العودة بقوة",
+  "badgeComebackDesc": "7 أيام بدون مجددًا بعد تعثر.",
+  "badgeEarlyBird": "صباح مبكر",
+  "badgeEarlyBirdDesc": "5 تسجيلات قبل 8 ص.",
+  "badgeStreak30": "30 يوم ثبات",
+  "badgeStreak30Desc": "سلسلة 30 يومًا لعادة يومية.",
+  "badgeClean100": "100 يوم بدون",
+  "badgeClean100Desc": "100 يوم دون تعثر في عادة تتجنبها.",
+  "badgeGoalReached": "الهدف تحقق",
+  "badgeGoalReachedDesc": "حقق أي هدف وضعته لعادة.",
+  "celebrateStreak30": "مبروك! 30 يوم من الثبات 🎉",
+  "celebrateClean100": "مبروك! 100 يوم بدون 🎉",
+  "celebrateBadge": "مبروك! شارة «{name}» 🎉",
+  "@celebrateBadge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "celebrateGoal": "مبروك! حققت هدف «{name}» 🎉",
+  "@celebrateGoal": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "celebrateBody": "هذه عادة حقيقية تتكوّن، خطوة ثابتة بعد خطوة.",
+  "share": "مشاركة",
+  "continueBtn": "متابعة",
+  "shareText": "حققت «{badge}» في ثبات. خطوة ثابتة كل يوم.",
+  "@shareText": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "remindersTitle": "التذكيرات",
+  "remindersActive": "{on} من {total} مفعّلة",
+  "@remindersActive": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "streakRiskTitle": "تنبيه السلسلة في خطر",
+  "streakRiskSub": "{time} إذا بقيت عادة يومية دون تسجيل",
+  "@streakRiskSub": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quietHours": "ساعات الهدوء",
+  "quietSub": "{start} – {end} · لا يُرسل أي إشعار",
+  "@quietSub": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "quietOff": "متوقفة",
+  "scheduledReminders": "التذكيرات المجدولة",
+  "noReminders": "لا تذكيرات بعد. فعّل تذكيرًا من شاشة تعديل العادة.",
+  "notificationsOffBanner": "الإشعارات متوقفة من الإعدادات.",
+  "toggleReminderA11y": "تذكير {name}",
+  "@toggleReminderA11y": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "streakRiskNotifTitle": "سلسلتك في خطر 🔥",
+  "streakRiskNotifBody": "لم تسجّل «{name}» اليوم بعد. نقرة واحدة تحفظ سلسلتك.",
+  "@streakRiskNotifBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "channelReminders": "تذكيرات العادات",
+  "channelStreak": "تنبيهات السلسلة",
+  "profileTitle": "حسابي",
+  "daysWithUs": "{days} معنا",
+  "@daysWithUs": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsCount": "{count, plural, =0{0 عادات} =1{عادة واحدة} =2{عادتان} few{{count} عادات} other{{count} عادة}}",
+  "@habitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badgesCount": "{count, plural, =0{0 شارات} =1{شارة واحدة} =2{شارتان} few{{count} شارات} other{{count} شارة}}",
+  "@badgesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionLanguage": "اللغة",
+  "appLanguage": "لغة التطبيق",
+  "sectionNotifications": "الإشعارات",
+  "notifications": "الإشعارات",
+  "activeCount": "{n} مفعّلة",
+  "@activeCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "sectionPreferences": "التفضيلات",
+  "weekStart": "بداية الأسبوع",
+  "monday": "الاثنين",
+  "saturday": "السبت",
+  "sunday": "الأحد",
+  "appearance": "المظهر",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "themeSystem": "تلقائي",
+  "sectionData": "بياناتك",
+  "exportData": "تصدير البيانات JSON",
+  "exportSubject": "بيانات ثبات",
+  "exportFailed": "تعذّر التصدير.",
+  "seedData": "إضافة بيانات تجريبية",
+  "seedDone": "أُضيفت العادات التجريبية.",
+  "signOut": "تسجيل الخروج",
+  "deleteAccount": "حذف الحساب",
+  "deleteAccountTitle": "حذف الحساب؟",
+  "deleteAccountBody": "سيتم حذف حسابك وكل عاداتك وسجلاتك وشاراتك نهائيًا. لا يمكن التراجع عن ذلك.",
+  "deleteAccountConfirm": "احذف نهائيًا",
+  "versionLine": "ثبات {version} · الشروط · الخصوصية",
+  "@versionLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "quietStart": "من",
+  "quietEnd": "إلى",
+  "languageTitle": "اختيار اللغة",
+  "languageHint": "يتغير اتجاه التطبيق تلقائيًا حسب اللغة.",
+  "streakRiskTime": "وقت التنبيه",
+  "loading": "جارٍ التحميل…",
+  "errorGeneric": "حدث خطأ. حاول مرة أخرى.",
+  "retry": "إعادة المحاولة",
+  "habitNotFound": "لم نجد هذه العادة.",
+  "am": "ص",
+  "pm": "م",
+  "seedWater": "شرب الماء",
+  "seedRead": "قراءة 20 دقيقة",
+  "seedGym": "الرياضة",
+  "seedFamily": "زيارة العائلة",
+  "seedSmoke": "التدخين",
+  "seedSocial": "الإفراط في وسائل التواصل",
+  "seedFastFood": "الوجبات السريعة",
+  "seedSoda": "المشروبات الغازية",
+  "seedWaterMsg": "كوب ماء؟ جسمك يشكرك.",
+  "seedReadMsg": "استرخِ مع 20 دقيقة من القراءة.",
+  "seedGymMsg": "يوم الرياضة! جسمك جاهز.",
+  "seedSocialMsg": "كيف كان وقت الشاشة اليوم؟",
+  "seedReadNote": "القراءة تهدئ ذهني قبل النوم.",
+  "deleteAccountFailed": "تعذّر حذف الحساب. تحقق من اتصالك بالإنترنت وحاول مجددًا.",
+  "signedInWithGoogle": "مسجّل الدخول عبر Google",
+  "signInFailed": "تعذّر تسجيل الدخول. حاول مرة أخرى.",
+  "signInNetwork": "لا يوجد اتصال بالإنترنت. تسجيل الدخول يحتاج إلى اتصال.",
+  "signInNotConfigured": "تسجيل الدخول عبر Google غير مُعدّ بعد في هذه النسخة.",
+  "pendingSync": "{count} تغييرات بانتظار المزامنة",
+  "@pendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "syncedAll": "كل بياناتك محفوظة في السحابة",
+  "notifAllowed": "الإشعارات مسموحة",
+  "notifBlocked": "الإشعارات محظورة لتطبيق ثبات، لذلك لن تصلك التذكيرات.",
+  "allowNotifications": "السماح بالإشعارات",
+  "openSettings": "فتح الإعدادات",
+  "exactAlarmsOff": "قد تتأخر التذكيرات بضع دقائق. فعّل التوقيت الدقيق لتصلك في الدقيقة نفسها.",
+  "exactAlarmsAllow": "تفعيل التوقيت الدقيق",
+  "testNotification": "إرسال إشعار تجريبي",
+  "testNotificationTitle": "ثبات 🔔",
+  "testNotificationBody": "الإشعارات تعمل. ستصلك تذكيراتك في وقتها.",
+  "scheduledCount": "{count} إشعارات مجدولة على هذا الجهاز",
+  "@scheduledCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
+}
