@@ -84,37 +84,43 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             if (habits.isEmpty)
               AppCard(child: Text(l.noData, style: TextStyle(color: c.sub)))
             else ...[
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.35,
-                children: [
-                  for (final (label, value, unit, note, accent) in cards)
-                    AppCard(
-                      padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 14),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: c.sub)),
-                          const Spacer(),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Text.rich(TextSpan(children: [
-                              TextSpan(text: value, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: accent ? accText : c.text)),
-                              TextSpan(text: unit, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: c.sub)),
-                            ])),
+              // Two cards per row; each row is as tall as its tallest card, so long
+              // Arabic/French text or a large system font size never overflows.
+              for (var i = 0; i < cards.length; i += 2) ...[
+                if (i > 0) const SizedBox(height: 12),
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final (j, (label, value, unit, note, accent)) in cards.sublist(i, i + 2).indexed) ...[
+                        if (j > 0) const SizedBox(width: 12),
+                        Expanded(
+                          child: AppCard(
+                            padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: c.sub)),
+                                const SizedBox(height: 4),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: Text.rich(TextSpan(children: [
+                                    TextSpan(text: value, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: accent ? accText : c.text)),
+                                    TextSpan(text: unit, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: c.sub)),
+                                  ])),
+                                ),
+                                const Spacer(),
+                                Text(note, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, height: 1.4, color: c.sub)),
+                              ],
+                            ),
                           ),
-                          const Spacer(),
-                          Text(note, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, height: 1.4, color: c.sub)),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
               AppCard(
                 padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 18, 16),

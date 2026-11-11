@@ -44,7 +44,11 @@ ThemeData buildTheme(Brightness brightness, String languageCode) {
           bodyMedium: TextStyle(fontSize: 14, height: height, color: c.text),
           bodySmall: TextStyle(fontSize: 13, height: height, color: c.sub),
           labelLarge: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: c.text),
-        ),
+        )
+        // The styles above are new TextStyles without a family: re-apply IBM Plex to all of them,
+        // otherwise text silently falls back to the system font (Roboto / default Arabic).
+        .apply(fontFamily: family, fontFamilyFallback: fallbackFor(languageCode)),
+    primaryTextTheme: base.primaryTextTheme.apply(fontFamily: family, fontFamilyFallback: fallbackFor(languageCode)),
     appBarTheme: AppBarTheme(
       backgroundColor: c.bg,
       foregroundColor: c.text,

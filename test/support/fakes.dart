@@ -5,8 +5,9 @@ import 'package:thabat/features/habits/data/remote_api.dart';
 import 'package:thabat/features/habits/domain/models.dart';
 
 class FakeAuthService implements AuthService {
-  FakeAuthService({AuthUser? signedIn}) : _user = signedIn;
+  FakeAuthService({AuthUser? signedIn, AuthUser? account}) : _user = signedIn, _account = account ?? demo;
   AuthUser? _user;
+  final AuthUser _account;
   final _ctrl = StreamController<AuthUser?>.broadcast();
 
   static final demo = AuthUser(
@@ -27,7 +28,7 @@ class FakeAuthService implements AuthService {
 
   @override
   Future<void> signInWithGoogle() async {
-    _user = demo;
+    _user = _account;
     _ctrl.add(_user);
   }
 
