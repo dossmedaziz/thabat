@@ -672,8 +672,8 @@
       }
     }
   },
-  "codeLabel": "رمز التحقق",
-  "codeRequired": "اكتب الرمز الذي وصلك",
+  "codeLabel": "رمز التحقق (6 أرقام)",
+  "codeRequired": "اكتب الرمز المكوّن من 6 أرقام",
   "verifyCode": "تأكيد والدخول",
   "resendCode": "إعادة إرسال الرمز",
   "resendIn": "إعادة الإرسال بعد {seconds} ث",

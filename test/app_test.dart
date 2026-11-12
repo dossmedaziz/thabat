@@ -240,13 +240,17 @@ void main() {
     expect(find.textContaining('sara@example.com'), findsOneWidget);
     expect(find.textContaining('Resend in'), findsOneWidget); // cooldown running
 
+    // Typing the 6th digit submits on its own.
+    await tester.enterText(find.byType(TextFormField), '12345');
+    await tester.pumpAndSettle();
+    expect(find.text('Enter the code'), findsOneWidget); // 5 digits: nothing sent yet
     await tester.enterText(find.byType(TextFormField), '000000');
-    await tester.tap(find.text('Verify and sign in'));
     await tester.pumpAndSettle();
     expect(find.text('That code is wrong or has expired.'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField), '9999999'); // a 7th digit is ignored
+    expect(tester.widget<EditableText>(find.byType(EditableText)).controller.text.length, 6);
 
     await tester.enterText(find.byType(TextFormField), FakeAuthService.emailCode);
-    await tester.tap(find.text('Verify and sign in'));
     await tester.pumpAndSettle();
     expect(find.text('Your first step starts here'), findsOneWidget); // new account → empty Today
     expect(container.read(appDataControllerProvider).value!.user!.provider, 'email');

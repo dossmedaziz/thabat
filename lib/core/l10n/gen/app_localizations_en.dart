@@ -1069,10 +1069,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get codeLabel => 'Verification code';
+  String get codeLabel => '6-digit code';
 
   @override
-  String get codeRequired => 'Enter the code you received';
+  String get codeRequired => 'Enter the 6-digit code';
 
   @override
   String get verifyCode => 'Verify and sign in';

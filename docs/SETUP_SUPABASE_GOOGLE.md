@@ -79,14 +79,14 @@ must contain `{{ .Token }}` (the code) instead of `{{ .ConfirmationURL }}` (the 
 
 For each one: Supabase dashboard → project **thabat** → **Authentication → Emails →
 Templates** → open the template, then:
-1. **Subject:** `{{ .Token }} رمز الدخول إلى ثبات · Thabat code`
+1. **Subject:** `{{ .Token }}`
 2. **Body:** replace everything with the contents of
    [`supabase/templates/otp_code.html`](../supabase/templates/otp_code.html)
-   (Arabic/English/French, the code in a large box, no link).
+   (only the 6-digit code, nothing else).
 3. **Save.**
 
-The code length is set under **Authentication → Sign In / Providers → Email → Email OTP
-length** (the app accepts 6–10 digits).
+**Set the code length to 6:** **Authentication → Sign In / Providers → Email → Email OTP
+Length = 6**. The app accepts exactly 6 digits and signs in as soon as the 6th is typed.
 
 **b. Let Supabase email real users.** Supabase's built-in sender only delivers to
 members of your Supabase organization (your own address works for testing) and only a
@@ -105,6 +105,7 @@ Nothing needs to change in the app for either step.
 - [ ] Supabase (project **thabat**, not myapp): Google enabled, Web + Android client IDs and the Web secret saved
 - [ ] APK built with `--dart-define=GOOGLE_WEB_CLIENT_ID=...`
 - [ ] Email: **Magic link** and **Confirm signup** templates both contain `{{ .Token }}` (no link)
+- [ ] Email: **Email OTP Length** = 6
 - [ ] Email: custom SMTP connected before real users sign up (built-in sender only reaches your team)
 
 ## Troubleshooting sign-in

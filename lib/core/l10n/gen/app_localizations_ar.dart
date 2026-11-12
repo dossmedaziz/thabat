@@ -1080,10 +1080,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get codeLabel => 'رمز التحقق';
+  String get codeLabel => 'رمز التحقق (6 أرقام)';
 
   @override
-  String get codeRequired => 'اكتب الرمز الذي وصلك';
+  String get codeRequired => 'اكتب الرمز المكوّن من 6 أرقام';
 
   @override
   String get verifyCode => 'تأكيد والدخول';

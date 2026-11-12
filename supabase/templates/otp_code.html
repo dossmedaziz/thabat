@@ -1,18 +1,1 @@
-<!-- Thabat · paste into BOTH Supabase email templates:
-     Authentication → Emails → Templates → "Magic link"  and  "Confirm signup".
-     {{ .Token }} is the one-time code. There is no link on purpose. -->
-<div style="font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 420px; margin: 0 auto; padding: 32px 24px; color: #111114;">
-  <div style="width: 52px; height: 52px; border-radius: 16px; background: #4263EB; margin-bottom: 20px;"></div>
-
-  <p dir="rtl" style="font-size: 17px; font-weight: 700; margin: 0 0 4px;">رمز الدخول إلى ثبات</p>
-  <p style="font-size: 15px; color: #62626B; margin: 0 0 20px;">Your Thabat sign-in code · Votre code Thabat</p>
-
-  <div style="font-size: 36px; font-weight: 800; letter-spacing: 10px; text-align: center; background: #E6EAFF; color: #111114; border-radius: 20px; padding: 18px 0; margin-bottom: 20px;">{{ .Token }}</div>
-
-  <p dir="rtl" style="font-size: 14px; color: #62626B; margin: 0 0 6px;">اكتب هذا الرمز في التطبيق. لا تشاركه مع أحد.</p>
-  <p style="font-size: 14px; color: #62626B; margin: 0;">Type this code in the app. Don't share it with anyone.</p>
-
-  <p style="font-size: 12px; color: #A1A1AA; margin: 24px 0 0;">
-    إن لم تطلب هذا الرمز، تجاهل هذه الرسالة · If you didn't ask for this code, ignore this email.
-  </p>
-</div>
+<p style="font-size:32px;font-weight:bold;letter-spacing:8px;">{{ .Token }}</p>

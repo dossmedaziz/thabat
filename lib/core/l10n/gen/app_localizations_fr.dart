@@ -1074,10 +1074,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get codeLabel => 'Code de vérification';
+  String get codeLabel => 'Code à 6 chiffres';
 
   @override
-  String get codeRequired => 'Saisissez le code reçu';
+  String get codeRequired => 'Saisissez le code à 6 chiffres';
 
   @override
   String get verifyCode => 'Vérifier et se connecter';

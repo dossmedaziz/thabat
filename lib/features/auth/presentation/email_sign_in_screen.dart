@@ -28,6 +28,9 @@ class EmailSignInScreen extends ConsumerStatefulWidget {
 class _EmailSignInScreenState extends ConsumerState<EmailSignInScreen> {
   static const _cooldown = 60;
 
+  /// One-time codes are exactly 6 digits.
+  static const _codeLength = 6;
+
   final _emailForm = GlobalKey<FormState>();
   final _codeForm = GlobalKey<FormState>();
   final _email = TextEditingController();
@@ -224,14 +227,18 @@ class _EmailSignInScreenState extends ConsumerState<EmailSignInScreen> {
               autofocus: true,
               keyboardType: TextInputType.number,
               autofillHints: const [AutofillHints.oneTimeCode],
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(_codeLength)],
               textAlign: TextAlign.center,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _verify(),
+              // Sign in as soon as the 6th digit is typed (or pasted).
+              onChanged: (v) {
+                if (v.length == _codeLength && !_busy) _verify();
+              },
               style: const TextStyle(fontFamily: kLatinFont, fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: 8),
               decoration: InputDecoration(labelText: l.codeLabel, hintText: '••••••', counterText: ''),
-              // Supabase codes are 6–10 digits depending on the project setting.
-              validator: (v) => (v?.trim().length ?? 0) >= 6 ? null : l.codeRequired,
+              // Supabase → Authentication → Email → "Email OTP Length" must be 6.
+              validator: (v) => (v?.trim().length ?? 0) == _codeLength ? null : l.codeRequired,
             ),
           ),
           const SizedBox(height: 16),

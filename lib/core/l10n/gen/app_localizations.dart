@@ -1897,13 +1897,13 @@ abstract class AppLocalizations {
   /// No description provided for @codeLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رمز التحقق'**
+  /// **'رمز التحقق (6 أرقام)'**
   String get codeLabel;
 
   /// No description provided for @codeRequired.
   ///
   /// In ar, this message translates to:
-  /// **'اكتب الرمز الذي وصلك'**
+  /// **'اكتب الرمز المكوّن من 6 أرقام'**
   String get codeRequired;
 
   /// No description provided for @verifyCode.
