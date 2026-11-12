@@ -69,18 +69,24 @@ Without `GOOGLE_WEB_CLIENT_ID` the app still builds, but the sign-in button show
 Users can also sign in or create an account with just their email: the app emails
 a code, they type it in, and they're in. No password. Two dashboard settings make it work.
 
-**a. Send a code instead of a link.** Supabase dashboard → project **thabat** →
-**Authentication → Emails → Templates → Magic link**. Replace the body with something like:
+**a. Send a code instead of a link.** Supabase uses two templates here, and **both**
+must contain `{{ .Token }}` (the code) instead of `{{ .ConfirmationURL }}` (the link):
 
-```html
-<h2>رمز الدخول إلى ثبات · Your Thabat code</h2>
-<p>{{ .Token }}</p>
-<p>ينتهي خلال ساعة · Expires in one hour.</p>
-```
+| Template | Sent when |
+|---|---|
+| **Magic link** | Someone who already has an account signs in |
+| **Confirm signup** | An email is used for the first time (new account) |
 
-`{{ .Token }}` is the code. If the template still contains `{{ .ConfirmationURL }}`
-instead, users get a link the app can't use. The code length is set under
-**Authentication → Sign In / Providers → Email → Email OTP length** (the app accepts 6–10 digits).
+For each one: Supabase dashboard → project **thabat** → **Authentication → Emails →
+Templates** → open the template, then:
+1. **Subject:** `{{ .Token }} رمز الدخول إلى ثبات · Thabat code`
+2. **Body:** replace everything with the contents of
+   [`supabase/templates/otp_code.html`](../supabase/templates/otp_code.html)
+   (Arabic/English/French, the code in a large box, no link).
+3. **Save.**
+
+The code length is set under **Authentication → Sign In / Providers → Email → Email OTP
+length** (the app accepts 6–10 digits).
 
 **b. Let Supabase email real users.** Supabase's built-in sender only delivers to
 members of your Supabase organization (your own address works for testing) and only a
@@ -98,14 +104,14 @@ Nothing needs to change in the app for either step.
 - [ ] Google Cloud: **Android** client, package `com.thabat.thabat`, SHA-1 of the key that signs the APK
 - [ ] Supabase (project **thabat**, not myapp): Google enabled, Web + Android client IDs and the Web secret saved
 - [ ] APK built with `--dart-define=GOOGLE_WEB_CLIENT_ID=...`
-- [ ] Email: Magic link template contains `{{ .Token }}`
+- [ ] Email: **Magic link** and **Confirm signup** templates both contain `{{ .Token }}` (no link)
 - [ ] Email: custom SMTP connected before real users sign up (built-in sender only reaches your team)
 
 ## Troubleshooting sign-in
 
 | What you see | Likely cause |
 |---|---|
-| The email contains a link, not a code | The Magic link template doesn't include `{{ .Token }}` (step 4a) |
+| The email contains a link, not a code | That template still uses `{{ .ConfirmationURL }}`. A new email uses **Confirm signup**, an existing account uses **Magic link**; update both (step 4a) |
 | "We can't send a code to this address right now" | No custom SMTP yet, and the address isn't a member of your Supabase organization (step 4b) |
 | "Too many attempts" | One code per address per 60 s, plus the hourly email limit |
 | "That code is wrong or has expired" | Typo, an older code, or the code is past its expiry; tap **Resend code** |
