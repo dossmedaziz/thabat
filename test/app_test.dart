@@ -220,4 +220,37 @@ void main() {
     final log = HabitLog(date: '2026-11-10', status: LogStatus.slipped, note: 'x', createdAt: now);
     expect(logFromRow(jsonDecode(jsonEncode(logToRow(h.id, log, 'uid'))) as Map<String, dynamic>), log);
   });
+
+  testWidgets('email sign-in: code is emailed, wrong code rejected, right code signs in', (tester) async {
+    final container = await pumpApp(tester, locale: 'en');
+    await tester.tap(find.text('Continue with email'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in with email'), findsOneWidget);
+
+    // Invalid address is caught before anything is sent.
+    await tester.enterText(find.byType(TextFormField), 'not-an-email');
+    await tester.tap(find.text('Send code'));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter a valid email address'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField), 'sara@example.com');
+    await tester.tap(find.text('Send code'));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter the code'), findsOneWidget);
+    expect(find.textContaining('sara@example.com'), findsOneWidget);
+    expect(find.textContaining('Resend in'), findsOneWidget); // cooldown running
+
+    await tester.enterText(find.byType(TextFormField), '000000');
+    await tester.tap(find.text('Verify and sign in'));
+    await tester.pumpAndSettle();
+    expect(find.text('That code is wrong or has expired.'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField), FakeAuthService.emailCode);
+    await tester.tap(find.text('Verify and sign in'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your first step starts here'), findsOneWidget); // new account → empty Today
+    expect(container.read(appDataControllerProvider).value!.user!.provider, 'email');
+    expect(container.read(appDataControllerProvider).value!.user!.name, 'sara');
+    await finish(tester, container);
+  });
 }

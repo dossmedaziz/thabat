@@ -10,12 +10,22 @@ import 'remote_api.dart';
 
 /// The signed-in user as shown in the app (from the Google account via Supabase Auth).
 class UserProfile {
-  const UserProfile({required this.name, required this.fullName, required this.email, required this.joinedAt, this.photoUrl});
+  const UserProfile({
+    required this.name,
+    required this.fullName,
+    required this.email,
+    required this.joinedAt,
+    this.photoUrl,
+    this.provider = 'google',
+  });
   final String name;
   final String fullName;
   final String email;
   final DateTime joinedAt;
   final String? photoUrl;
+
+  /// 'google' or 'email'.
+  final String provider;
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -23,6 +33,7 @@ class UserProfile {
         'email': email,
         'joinedAt': joinedAt.toIso8601String(),
         'photoUrl': photoUrl,
+        'provider': provider,
       };
 
   factory UserProfile.fromJson(Map<String, dynamic> j) => UserProfile(
@@ -31,6 +42,7 @@ class UserProfile {
         email: j['email'] as String? ?? '',
         joinedAt: DateTime.tryParse(j['joinedAt'] as String? ?? '') ?? DateTime.now(),
         photoUrl: j['photoUrl'] as String?,
+        provider: j['provider'] as String? ?? 'google',
       );
 }
 

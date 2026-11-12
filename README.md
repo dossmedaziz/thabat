@@ -5,9 +5,9 @@
 An Arabic-first habit tracker for Android and iOS, built with Flutter. Build good habits, break bad ones, keep your streaks, and get gentle reminders. Full RTL layout in Arabic, plus English and French.
 
 <p align="center">
-  <img src="docs/screenshots/ar_02_today.png" width="230" alt="Today screen (Arabic)">
+  <img src="docs/screenshots/ar_02_today.png" width="230" alt="Today screen (Arabic, dark)">
   <img src="docs/screenshots/ar_04_habit_detail.png" width="230" alt="Habit detail with month heatmap">
-  <img src="docs/screenshots/ar_dark_today.png" width="230" alt="Today screen, dark theme">
+  <img src="docs/screenshots/ar_light_today.png" width="230" alt="Today screen, light theme">
 </p>
 
 ## Features
@@ -19,12 +19,36 @@ An Arabic-first habit tracker for Android and iOS, built with Flutter. Build goo
 - **Progress charts** for the last 7 days and the last 6 months, filterable by all / good / bad.
 - **9 badges** with a confetti celebration when you unlock one or reach a goal.
 - **Reminders** as local notifications, an evening "streak at risk" alert, and quiet hours.
-- **Google sign-in** with data stored in **Supabase**. Works offline and syncs when the connection returns.
+- **Sign in with Google or with email** (a one-time code is emailed; the same flow creates new accounts). Data is stored in **Supabase**, works offline and syncs when the connection returns.
 - **Arabic (default), English, French**, switchable instantly. Light, dark or automatic theme.
+
+## Design
+
+Thabat uses the same design system as the **Cashflow** app:
+
+- **Flat surfaces.** No shadows or gradients: a dark-first gray background with cards one step lighter.
+- **Color by meaning.** Indigo `#4263EB` for every action, mint for "done" and good habits, rose for bad habits, peach for streaks. Each habit has one of 8 soft pastels.
+- **Large radii.** Hero card 24, list cards 22, sheets 28, buttons and chips fully pill-shaped.
+- **Type.** Inter for Latin text and every digit, IBM Plex Sans Arabic for Arabic.
+- **Motion.** Short ease-out transitions; a press scales to 0.96 instead of an ink ripple, and "Reduce motion" is respected.
+
+Shared components live in `lib/core/widgets/`:
+
+| Component | Use |
+|---|---|
+| `AppButton` | Pill buttons: primary (indigo), secondary, danger, Google |
+| `CircleIconButton` | 44 px round icon buttons |
+| `Segmented` | Indigo segmented control |
+| `FilterPill`, `PickerPill`, `TintBadge` | Chips and tags |
+| `GroupedCard`, `NavRow` | Grouped lists |
+| `showAppBottomSheet` + `AppBottomSheet` | Sheets with a handle and a round close button |
+| `Pressable` | Press-scale feedback |
+
+Tokens (spacing, radii, sizes, motion) are in `lib/core/theme/app_tokens.dart`, and colors in `app_colors.dart`.
 
 ## Screenshots
 
-### Arabic (RTL)
+### Arabic (RTL, dark)
 
 | Sign in | Today: build | Today: avoid |
 |:-:|:-:|:-:|
@@ -38,11 +62,11 @@ An Arabic-first habit tracker for Android and iOS, built with Flutter. Build goo
 |:-:|:-:|:-:|
 | <img src="docs/screenshots/ar_07_achievements.png" width="220"> | <img src="docs/screenshots/ar_08_profile.png" width="220"> | <img src="docs/screenshots/ar_09_reminders.png" width="220"> |
 
-### Dark theme
+### Light theme
 
 | Today | Bad habit detail |
 |:-:|:-:|
-| <img src="docs/screenshots/ar_dark_today.png" width="220"> | <img src="docs/screenshots/ar_dark_habit_detail.png" width="220"> |
+| <img src="docs/screenshots/ar_light_today.png" width="220"> | <img src="docs/screenshots/ar_light_habit_detail.png" width="220"> |
 
 ### English and French (LTR)
 
@@ -56,11 +80,11 @@ The screenshots are rendered by a test, so they always match the current code (s
 
 | Area | Choice |
 |---|---|
-| UI | Flutter, Material 3, IBM Plex Sans Arabic + IBM Plex Sans (bundled) |
+| UI | Flutter, Material 3, Cashflow design system; Inter + IBM Plex Sans Arabic (bundled) |
 | State | Riverpod 3 + riverpod_generator |
 | Navigation | go_router with a sign-in redirect |
 | Backend | Supabase: Auth (Google), Postgres with row-level security |
-| Sign-in | google_sign_in (native account picker) → `signInWithIdToken` |
+| Sign-in | Google: google_sign_in → `signInWithIdToken`. Email: one-time code with `signInWithOtp` / `verifyOTP` |
 | Models | freezed + json_serializable |
 | Reminders | flutter_local_notifications + timezone |
 | Charts and animation | fl_chart, confetti, Lottie |
@@ -70,9 +94,9 @@ The screenshots are rendered by a test, so they always match the current code (s
 
 ```
 lib/
-  core/        config, theme, l10n, router, utils, shared widgets
+  core/        config, theme (tokens, colors, text styles), l10n, router, utils, shared widgets
   features/
-    auth/          Google sign-in, sign-in screen
+    auth/          Google and email-code sign-in, sign-in screens
     habits/        models, streak/stat logic, Supabase sync, Today / editor / detail
     progress/      stats and charts
     achievements/  badge rules, badge grid, celebration overlay
@@ -86,9 +110,9 @@ docs/                  setup guide and screenshots
 
 ## Getting started
 
-### 1. One-time setup: Supabase and Google sign-in
+### 1. One-time setup: Supabase, Google and email sign-in
 
-The database is already created in the Supabase project **thabat**. You only need to connect Google: create the OAuth clients in Google Cloud, then enable Google in Supabase. Follow the step-by-step guide in **[docs/SETUP_SUPABASE_GOOGLE.md](docs/SETUP_SUPABASE_GOOGLE.md)**.
+The database is already created in the Supabase project **thabat**. You need to connect Google (OAuth clients in Google Cloud, then enable Google in Supabase), switch the email template to send a code, and, before real users, connect an email service. Follow the step-by-step guide in **[docs/SETUP_SUPABASE_GOOGLE.md](docs/SETUP_SUPABASE_GOOGLE.md)**.
 
 ### 2. Install dependencies and generate code
 

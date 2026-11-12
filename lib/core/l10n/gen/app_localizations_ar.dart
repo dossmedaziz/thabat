@@ -1048,4 +1048,93 @@ class AppLocalizationsAr extends AppLocalizations {
   String scheduledCount(String count) {
     return '$count إشعارات مجدولة على هذا الجهاز';
   }
+
+  @override
+  String get continueWithEmail => 'المتابعة بالبريد الإلكتروني';
+
+  @override
+  String get orDivider => 'أو';
+
+  @override
+  String get emailTitle => 'الدخول بالبريد الإلكتروني';
+
+  @override
+  String get emailSubtitle =>
+      'سنرسل لك رمز تحقق. إن لم يكن لديك حساب، سننشئه لك تلقائيًا.';
+
+  @override
+  String get emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get emailInvalid => 'اكتب بريدًا إلكترونيًا صحيحًا';
+
+  @override
+  String get sendCode => 'إرسال الرمز';
+
+  @override
+  String get codeTitle => 'أدخل رمز التحقق';
+
+  @override
+  String codeSentTo(String email) {
+    return 'أرسلنا رمزًا إلى $email. إن لم تجده، تحقق من مجلد الرسائل غير المرغوب فيها.';
+  }
+
+  @override
+  String get codeLabel => 'رمز التحقق';
+
+  @override
+  String get codeRequired => 'اكتب الرمز الذي وصلك';
+
+  @override
+  String get verifyCode => 'تأكيد والدخول';
+
+  @override
+  String get resendCode => 'إعادة إرسال الرمز';
+
+  @override
+  String resendIn(String seconds) {
+    return 'إعادة الإرسال بعد $seconds ث';
+  }
+
+  @override
+  String get changeEmail => 'تغيير البريد';
+
+  @override
+  String get codeResent => 'أرسلنا رمزًا جديدًا.';
+
+  @override
+  String get codeInvalid => 'الرمز غير صحيح أو انتهت صلاحيته.';
+
+  @override
+  String get codeRateLimited => 'طلبات كثيرة. انتظر قليلًا ثم حاول مجددًا.';
+
+  @override
+  String get emailNotAuthorized =>
+      'تعذّر إرسال الرمز إلى هذا البريد حاليًا. جرّب لاحقًا أو استخدم Google.';
+
+  @override
+  String get signedInWithEmail => 'مسجّل الدخول بالبريد الإلكتروني';
+
+  @override
+  String get todayProgress => 'تقدّم اليوم';
+
+  @override
+  String ofTotal(String total) {
+    return 'من $total';
+  }
+
+  @override
+  String get allDoneToday => 'أنجزت كل عادات اليوم';
+
+  @override
+  String get colorGreen => 'أخضر';
+
+  @override
+  String get colorOrange => 'برتقالي';
+
+  @override
+  String get colorRed => 'أحمر';
+
+  @override
+  String get colorYellow => 'أصفر';
 }

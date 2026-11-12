@@ -63,6 +63,7 @@ UserProfile profileFromAuth(AuthUser u) => UserProfile(
       email: u.email,
       joinedAt: u.createdAt.toLocal(),
       photoUrl: u.photoUrl,
+      provider: u.provider,
     );
 
 /// Applies one change to the local data set. The same function is used for new

@@ -12,6 +12,8 @@ import '../router/app_router.dart';
 import '../theme/app_colors.dart';
 import '../utils/clock.dart';
 import 'app_icon.dart';
+import 'pressable.dart';
+import '../theme/app_tokens.dart';
 
 /// Bottom-navigation shell. Also hosts celebration overlays and notification deep links.
 class AppShell extends ConsumerStatefulWidget {
@@ -107,20 +109,20 @@ class ThabatNavBar extends StatelessWidget {
           button: true,
           label: label,
           excludeSemantics: true,
-          child: InkResponse(
+          child: Pressable(
             onTap: () => onSelect(i),
-            radius: 36,
+            button: false,
             child: SizedBox(
               height: 54,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AppIcon(icon, size: 24, color: on ? c.goodText : c.sub, strokeWidth: on ? 2 : 1.8),
+                  AppIcon(icon, size: 24, color: on ? c.primary : c.sub, strokeWidth: on ? 2.1 : 1.8),
                   const SizedBox(height: 3),
                   Text(label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 11, height: 1.3, fontWeight: FontWeight.w600, color: on ? c.goodText : c.sub)),
+                      style: TextStyle(fontSize: 11, height: 1.3, fontWeight: FontWeight.w600, color: on ? c.primary : c.sub)),
                 ],
               ),
             ),
@@ -141,27 +143,18 @@ class ThabatNavBar extends StatelessWidget {
               tab(0, 'home', l.tabToday),
               tab(1, 'chart', l.tabProgress),
               Expanded(
-                child: Transform.translate(
-                  offset: const Offset(0, -22),
-                  child: Center(
-                    child: Semantics(
-                      button: true,
-                      label: l.addHabit,
-                      excludeSemantics: true,
-                      child: GestureDetector(
-                        onTap: onAdd,
-                        child: Container(
-                          width: 58,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            color: c.goodBtn,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [BoxShadow(color: Color(0x590C8569), blurRadius: 20, offset: Offset(0, 8))],
-                          ),
-                          alignment: Alignment.center,
-                          child: AppIcon('plus', size: 28, color: c.onGood, strokeWidth: 2.4),
-                        ),
-                      ),
+                child: Center(
+                  // Cashflow's add button: a neutral pill, flat (no glow, not raised).
+                  child: Pressable(
+                    semanticLabel: l.addHabit,
+                    onTap: onAdd,
+                    haptic: true,
+                    child: Container(
+                      width: 64,
+                      height: 46,
+                      decoration: BoxDecoration(color: c.fab, borderRadius: AppRadii.pillAll),
+                      alignment: Alignment.center,
+                      child: AppIcon('plus', size: 26, color: c.fabFg, strokeWidth: 2.4),
                     ),
                   ),
                 ),

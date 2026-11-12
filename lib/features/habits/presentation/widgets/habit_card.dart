@@ -8,7 +8,10 @@ import '../../../../core/l10n/l10n_x.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_icon.dart';
-import '../../../../core/widgets/common.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/widgets/chips.dart';
+import '../../../../core/widgets/pressable.dart';
 import '../../application/habits_controller.dart';
 import '../../domain/habit_stats.dart';
 import '../../domain/models.dart';
@@ -46,61 +49,69 @@ class HabitCard extends ConsumerWidget {
     final h = habit;
     final meta = metaText(l, h, s);
 
-    final card = AppCard(
-      padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 12),
-      onTap: () => context.push(Routes.habit(h.id)),
-      child: Row(
-        children: [
-          habitTileFor(context, h),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(h.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+    final tone = HabitPalette.resolve(h.colorHex, Theme.of(context).brightness);
+    final t = context.text;
+    // Row inside the grouped card (Cashflow's list row): icon · name + tag/streak · action.
+    final card = ColoredBox(
+      color: c.card,
+      child: Pressable(
+        scale: .98,
+        onTap: () => context.push(Routes.habit(h.id)),
+        semanticLabel: h.name,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.rowHorizontal, vertical: AppSpacing.rowVertical),
+          child: Row(
+            children: [
+              habitTileFor(context, h, size: AppSizes.rowIcon),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Chip2(l.freq(h.frequency)),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    Text(h.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: t.body.copyWith(height: 1.3)),
+                    const SizedBox(height: 5),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        AppIcon('flame', size: 15, color: c.flame, fill: c.flameFill, strokeWidth: 2),
-                        const SizedBox(width: 3),
-                        Flexible(
-                          child: Text(
-                            h.isBad && s.slippedToday ? l.freshStart : streakText(l, h, s),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: h.isBad && s.slippedToday ? c.sub : c.text,
+                        TintBadge(label: l.freq(h.frequency), fg: tone.fg, bg: tone.bg),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppIcon('flame', size: 14, color: c.flame, strokeWidth: 2),
+                            const SizedBox(width: 3),
+                            Flexible(
+                              child: Text(
+                                h.isBad && s.slippedToday ? l.freshStart : streakText(l, h, s),
+                                style: t.caption.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                  color: h.isBad && s.slippedToday ? c.sub : c.textSecondary,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
+                        if (meta != null) Text(meta, style: t.caption.copyWith(height: 1.2)),
                       ],
                     ),
-                    if (meta != null) Text(meta, style: TextStyle(fontSize: 13, color: c.sub)),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+              if (h.isGood)
+                CheckButton(
+                  done: s.doneToday,
+                  label: s.doneToday ? l.undoA11y(h.name) : l.markDoneA11y(h.name),
+                  onTap: () => actions.toggleDone(h, s),
+                )
+              else
+                _SlipButton(slipped: s.slippedToday, onTap: () => s.slippedToday ? actions.undoSlip(h) : actions.confirmSlip(h, s)),
+            ],
           ),
-          const SizedBox(width: 10),
-          if (h.isGood)
-            CheckButton(
-              done: s.doneToday,
-              label: s.doneToday ? l.undoA11y(h.name) : l.markDoneA11y(h.name),
-              onTap: () => actions.toggleDone(h, s),
-            )
-          else
-            _SlipButton(
-              slipped: s.slippedToday,
-              onTap: () => s.slippedToday ? actions.undoSlip(h) : actions.confirmSlip(h, s),
-            ),
-        ],
+        ),
       ),
     );
 
@@ -121,7 +132,7 @@ class HabitCard extends ConsumerWidget {
 
 /// One-tap check button with a pop (0.94 → 1.18 → 1.0) and a ray burst.
 class CheckButton extends StatefulWidget {
-  const CheckButton({super.key, required this.done, required this.onTap, required this.label, this.size = 48});
+  const CheckButton({super.key, required this.done, required this.onTap, required this.label, this.size = 44});
   final bool done;
   final VoidCallback onTap;
   final String label;
@@ -180,19 +191,17 @@ class _CheckButtonState extends State<CheckButton> with TickerProviderStateMixin
                 // Only drawn while the burst plays, so the idle first frame never shows.
                 child: AnimatedBuilder(
                   animation: _burst,
-                  builder: (context, child) => Visibility(
-                    visible: _burst.isAnimating,
-                    maintainState: true,
-                    maintainAnimation: true,
-                    child: child!,
-                  ),
+                  builder: (context, child) =>
+                      Visibility(visible: _burst.isAnimating, maintainState: true, maintainAnimation: true, child: child!),
                   child: Lottie.asset(
                     'assets/lottie/check_pop.json',
                     controller: _burst,
                     onLoaded: (comp) => _burst.duration = comp.duration,
-                    delegates: LottieDelegates(values: [
-                      ValueDelegate.strokeColor(const ['**'], value: c.good),
-                    ]),
+                    delegates: LottieDelegates(
+                      values: [
+                        ValueDelegate.strokeColor(const ['**'], value: c.good),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -206,13 +215,9 @@ class _CheckButtonState extends State<CheckButton> with TickerProviderStateMixin
                   duration: const Duration(milliseconds: 220),
                   width: widget.size,
                   height: widget.size,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: d ? c.good : Colors.transparent,
-                    border: Border.all(color: d ? c.good : c.line, width: 2),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: d ? c.good : c.field),
                   alignment: Alignment.center,
-                  child: AppIcon('check', size: widget.size / 2, color: d ? c.onGood : c.line, strokeWidth: 2.6),
+                  child: AppIcon('check', size: widget.size / 2, color: d ? c.onGood : c.faint, strokeWidth: 2.6),
                 ),
               ),
             ),
@@ -231,19 +236,15 @@ class _SlipButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = context.l10n;
-    return Material(
-      color: slipped ? c.chip : c.badSoft,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 14),
-          alignment: Alignment.center,
-          child: Text(slipped ? l.undo : l.slip,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: slipped ? c.sub : c.badText)),
-        ),
+    return Pressable(
+      onTap: onTap,
+      semanticLabel: slipped ? l.undo : l.slip,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 40, minWidth: 44),
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: slipped ? c.field : c.badSoft, borderRadius: AppRadii.pillAll),
+        child: Text(slipped ? l.undo : l.slip, style: context.text.buttonSmall.copyWith(fontSize: 14, color: slipped ? c.sub : c.badText)),
       ),
     );
   }

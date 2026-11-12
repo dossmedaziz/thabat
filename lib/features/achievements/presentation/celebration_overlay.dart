@@ -9,7 +9,9 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../core/l10n/l10n_x.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../habits/application/habits_controller.dart';
 import 'achievements_screen.dart';
 import 'badge_info.dart';
@@ -96,7 +98,7 @@ class _CelebrationViewState extends State<_CelebrationView>
               constraints: const BoxConstraints(maxWidth: 380),
               decoration: BoxDecoration(
                 color: c.card,
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: AppRadii.heroAll,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -141,11 +143,7 @@ class _CelebrationViewState extends State<_CelebrationView>
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      height: 1.4,
-                    ),
+                    style: context.text.sheetTitle.copyWith(fontSize: 21, height: 1.4),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -153,39 +151,23 @@ class _CelebrationViewState extends State<_CelebrationView>
                         ? l.celebrateBody
                         : info.description,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, color: c.sub),
+                    style: context.text.bodyMedium.copyWith(color: c.sub, fontWeight: FontWeight.w400, height: 1.7),
                   ),
                   const SizedBox(height: 22),
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(44, 52),
-                            foregroundColor: c.text,
-                            side: BorderSide(color: c.line, width: 1.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: () => SharePlus.instance.share(
-                            ShareParams(text: l.shareText(shareName)),
-                          ),
-                          icon: AppIcon(
-                            'share',
-                            size: 18,
-                            color: c.text,
-                            strokeWidth: 2,
-                          ),
-                          label: Text(l.share),
+                        child: AppButton(
+                          label: l.share,
+                          icon: 'share',
+                          variant: AppButtonVariant.secondary,
+                          height: 52,
+                          onPressed: () => SharePlus.instance.share(ShareParams(text: l.shareText(shareName))),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: FilledButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(l.continueBtn),
-                        ),
+                        child: AppButton(label: l.continueBtn, height: 52, onPressed: () => Navigator.of(context).pop()),
                       ),
                     ],
                   ),

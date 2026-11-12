@@ -32,6 +32,29 @@ class FakeAuthService implements AuthService {
     _ctrl.add(_user);
   }
 
+  /// Code the fake "emails"; any other code is rejected.
+  static const emailCode = '123456';
+  final sentCodes = <String>[];
+
+  @override
+  Future<void> sendEmailCode(String email) async {
+    if (!email.contains('@')) throw const SignInException(SignInError.invalidEmail);
+    sentCodes.add(email);
+  }
+
+  @override
+  Future<void> verifyEmailCode(String email, String code) async {
+    if (code != emailCode || !sentCodes.contains(email)) throw const SignInException(SignInError.invalidCode);
+    _user = AuthUser(
+      id: '00000000-0000-4000-8000-000000000002',
+      email: email,
+      fullName: '',
+      createdAt: DateTime.now(),
+      provider: 'email',
+    );
+    _ctrl.add(_user);
+  }
+
   @override
   Future<void> signOut() async {
     _user = null;

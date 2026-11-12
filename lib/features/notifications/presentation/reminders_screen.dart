@@ -7,6 +7,10 @@ import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/common.dart';
 import '../../habits/application/habits_controller.dart';
 import '../../habits/domain/models.dart';
@@ -23,22 +27,26 @@ Future<String?> pickTime(BuildContext context, String hm) async {
 /// Quiet hours editor (shared with Settings).
 Future<void> editQuietHours(BuildContext context, WidgetRef ref) async {
   final l = context.l10n;
-  await showModalBottomSheet<void>(
+  await showAppBottomSheet<void>(
     context: context,
     builder: (ctx) => Consumer(builder: (ctx, ref, _) {
       final s = ref.watch(settingsControllerProvider);
       final ctrl = ref.read(settingsControllerProvider.notifier);
-      Widget timeRow(String label, String hm, ValueChanged<String> set) => ListTile(
-            title: Text(label),
-            trailing: Text(l.time(hm), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-            onTap: () async {
-              final t = await pickTime(ctx, hm);
-              if (t != null) set(t);
-            },
+      Widget timeRow(String label, String hm, ValueChanged<String> set) => Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TimeRow(
+              label: label,
+              value: l.time(hm),
+              onTap: () async {
+                final t = await pickTime(ctx, hm);
+                if (t != null) set(t);
+              },
+            ),
           );
-      return SafeArea(
+      return AppBottomSheet(
+        title: l.quietHours,
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 12, 16),
+          padding: EdgeInsets.zero,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -86,7 +94,7 @@ class RemindersScreen extends ConsumerWidget {
               RoundIconButton(icon: 'back', tooltip: l.back, onTap: () => context.canPop() ? context.pop() : context.go(Routes.profile)),
             ]),
             const SizedBox(height: 12),
-            Text(l.remindersTitle, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, height: 1.4)),
+            Text(l.remindersTitle, style: context.text.title),
             Text(l.remindersActive('$on', '${habits.length}'), style: TextStyle(fontSize: 14, color: c.sub)),
             if (!s.notificationsEnabled) ...[
               const SizedBox(height: 12),
@@ -114,17 +122,20 @@ class RemindersScreen extends ConsumerWidget {
                     },
                   ),
                   if (s.streakRiskEnabled)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(l.streakRiskTime),
-                      trailing: Text(l.time(s.streakRiskTime), style: const TextStyle(fontWeight: FontWeight.w700)),
-                      onTap: () async {
-                        final t = await pickTime(context, s.streakRiskTime);
-                        if (t != null) ctrl.setStreakRiskTime(t);
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: TimeRow(
+                        label: l.streakRiskTime,
+                        value: l.time(s.streakRiskTime),
+                        onTap: () async {
+                          final t = await pickTime(context, s.streakRiskTime);
+                          if (t != null) ctrl.setStreakRiskTime(t);
+                        },
+                      ),
                     ),
                   const Divider(),
-                  InkWell(
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => editQuietHours(context, ref),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 60),
@@ -306,6 +317,33 @@ class _NotificationStatusCardState extends ConsumerState<_NotificationStatusCard
               label: Text(l.testNotification),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+
+/// Label with a time pill on a field background (tap to change).
+class TimeRow extends StatelessWidget {
+  const TimeRow({super.key, required this.label, required this.value, required this.onTap});
+  final String label, value;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Pressable(
+      onTap: onTap,
+      semanticLabel: '$label, $value',
+      scale: .98,
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: context.text.body)),
+          Container(
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(color: c.field, borderRadius: AppRadii.pillAll),
+            child: Text(value, style: context.text.body.copyWith(fontWeight: FontWeight.w700, height: 1.2)),
+          ),
         ],
       ),
     );

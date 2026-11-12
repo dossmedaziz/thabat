@@ -41,8 +41,11 @@ class _FakeNotifications extends NotificationService {
 }
 
 Future<void> _loadFonts() async {
-  const weights = ['Regular', 'Medium', 'SemiBold', 'Bold'];
-  for (final family in ['IBMPlexSansArabic', 'IBMPlexSans']) {
+  const families = {
+    'Inter': ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold'],
+    'IBMPlexSansArabic': ['Regular', 'Medium', 'SemiBold', 'Bold'],
+  };
+  for (final MapEntry(key: family, value: weights) in families.entries) {
     final loader = FontLoader(family);
     for (final w in weights) {
       loader.addFont(rootBundle.load('assets/fonts/$family-$w.ttf'));
@@ -127,8 +130,8 @@ void main() {
     Directory(_out).createSync(recursive: true);
   });
 
-  testWidgets('Arabic, light', (tester) async {
-    final (c, key) = await _start(tester, locale: 'ar');
+  testWidgets('Arabic, dark', (tester) async {
+    final (c, key) = await _start(tester, locale: 'ar', theme: 'dark');
     await _shot(tester, key, 'ar_01_sign_in');
     await _signInWithSamples(tester, c);
     await _shot(tester, key, 'ar_02_today');
@@ -154,13 +157,13 @@ void main() {
     await _finish(tester, c);
   });
 
-  testWidgets('Arabic, dark', (tester) async {
-    final (c, key) = await _start(tester, locale: 'ar', theme: 'dark');
+  testWidgets('Arabic, light', (tester) async {
+    final (c, key) = await _start(tester, locale: 'ar', theme: 'light');
     await _signInWithSamples(tester, c);
-    await _shot(tester, key, 'ar_dark_today');
+    await _shot(tester, key, 'ar_light_today');
     final smoke = c.read(habitsProvider).firstWhere((h) => h.name == 'التدخين');
     await _go(tester, c, '/habit/${smoke.id}', push: true);
-    await _shot(tester, key, 'ar_dark_habit_detail');
+    await _shot(tester, key, 'ar_light_habit_detail');
     await _finish(tester, c);
   });
 

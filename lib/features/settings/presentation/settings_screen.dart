@@ -14,6 +14,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/clock.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/chips.dart';
 import '../../../core/widgets/common.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../habits/application/habits_controller.dart';
@@ -89,88 +94,69 @@ class SettingsScreen extends ConsumerWidget {
     final remindersOn = habits.where((h) => h.reminder?.enabled ?? false).length;
     final pending = ref.watch(pendingSyncCountProvider);
 
-    Widget section(String title, List<Widget> rows) => Column(
+    final t = context.text;
+
+    Widget group(String? label, List<Widget> rows) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 18),
-            Padding(
-              padding: const EdgeInsetsDirectional.only(start: 4, bottom: 8),
-              child: Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: c.sub)),
-            ),
-            AppCard(
-              padding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 2),
-              child: Column(children: [
-                for (var i = 0; i < rows.length; i++) ...[if (i > 0) const Divider(), rows[i]],
-              ]),
-            ),
+            const SizedBox(height: 22),
+            if (label != null) FieldLabel(label),
+            GroupedCard(children: rows),
           ],
-        );
-
-    Widget navRow(String title, String? value, VoidCallback onTap, {String? icon}) => InkWell(
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 56),
-            child: Row(
-              children: [
-                if (icon != null) ...[AppIcon(icon, color: c.text), const SizedBox(width: 12)],
-                Expanded(child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                if (value != null) Text(value, style: TextStyle(fontSize: 14, color: c.sub)),
-                const SizedBox(width: 6),
-                AppIcon('forward', size: 20, color: c.sub, strokeWidth: 2),
-              ],
-            ),
-          ),
-        );
-
-    Widget actionRow(String title, String icon, Color color, VoidCallback onTap) => InkWell(
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 56),
-            child: Row(children: [
-              AppIcon(icon, color: color),
-              const SizedBox(width: 12),
-              Expanded(child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: color))),
-            ]),
-          ),
         );
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
+          padding: const EdgeInsetsDirectional.fromSTEB(AppSpacing.gutter, 16, AppSpacing.gutter, 32),
           children: [
-            Text(l.profileTitle, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, height: 1.4)),
-            const SizedBox(height: 14),
+            Text(l.profileTitle, style: t.title),
+            const SizedBox(height: 18),
+            // ---- account card ----
             AppCard(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(AppSpacing.xl),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      UserAvatar(name: user?.name ?? '', photoUrl: user?.photoUrl, size: 60),
+                      Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: c.avatarBg, width: 2)),
+                        child: UserAvatar(name: user?.name ?? '', photoUrl: user?.photoUrl, size: 58),
+                      ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user?.fullName ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                            Text(user?.fullName ?? '', style: t.sheetTitle.copyWith(fontSize: 19)),
                             Directionality(
                               textDirection: TextDirection.ltr,
-                              child: Text(user?.email ?? '', style: TextStyle(fontSize: 13, color: c.sub)),
+                              child: Text(user?.email ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: t.bodyMedium.copyWith(color: c.sub)),
                             ),
-                            const SizedBox(height: 4),
-                            Row(children: [
-                              const GoogleLogo(size: 14),
-                              const SizedBox(width: 6),
-                              Flexible(child: Text(l.signedInWithGoogle, style: TextStyle(fontSize: 12, color: c.sub))),
-                            ]),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsetsDirectional.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(color: c.field, borderRadius: AppRadii.pillAll),
+                              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                if (user?.provider == 'email')
+                                  AppIcon('mail', size: 14, color: c.sub, strokeWidth: 2)
+                                else
+                                  const GoogleLogo(size: 14),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(user?.provider == 'email' ? l.signedInWithEmail : l.signedInWithGoogle,
+                                      style: t.caption.copyWith(fontWeight: FontWeight.w600, color: c.textSecondary, height: 1.2)),
+                                ),
+                              ]),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       _Pill(l.daysWithUs(l.daysCount(user == null ? 0 : daysBetween(user.joinedAt, today) + 1))),
@@ -183,69 +169,110 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            section(l.sectionLanguage, [
-              navRow(l.appLanguage, languageName(context, s.locale), () => context.push(Routes.language), icon: 'globe'),
-            ]),
-            section(l.sectionNotifications, [
-              SwitchRow(
-                leading: AppIcon('bell', color: c.text),
-                title: l.notifications,
-                value: s.notificationsEnabled,
-                onChanged: (v) async {
-                  ctrl.setNotifications(v);
-                  if (v) await ref.read(notificationServiceProvider).requestPermission();
-                },
-              ),
-              navRow(l.remindersTitle, l.activeCount('$remindersOn'), () => context.push(Routes.reminders)),
-              navRow(l.quietHours, s.quietEnabled ? '${l.time(s.quietStart)} – ${l.time(s.quietEnd)}' : l.quietOff,
-                  () => editQuietHours(context, ref)),
-            ]),
-            section(l.sectionPreferences, [
-              navRow(l.weekStart, _weekStartName(context, s.weekStart), () => _pickWeekStart(context, ref)),
+            // ---- language & appearance: inline segmented controls ----
+            const SizedBox(height: 22),
+            FieldLabel(l.sectionLanguage),
+            Segmented<String>(
+              value: s.locale,
+              semanticLabel: l.appLanguage,
+              items: [('ar', l.langArabic, null), ('fr', l.langFrench, null), ('en', l.langEnglish, null)],
+              onChanged: ctrl.setLocale,
+            ),
+            const SizedBox(height: 22),
+            FieldLabel(l.appearance),
+            Segmented<ThemeMode>(
+              value: s.themeMode,
+              semanticLabel: l.appearance,
+              items: [
+                (ThemeMode.dark, l.themeDark, null),
+                (ThemeMode.light, l.themeLight, null),
+                (ThemeMode.system, l.themeSystem, null),
+              ],
+              onChanged: ctrl.setThemeMode,
+            ),
+            // ---- notifications ----
+            group(l.sectionNotifications, [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(l.appearance, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                    SizedBox(
-                      width: 210,
-                      child: Segmented<ThemeMode>(
-                        value: s.themeMode,
-                        height: 36,
-                        items: [
-                          (ThemeMode.light, l.themeLight, null),
-                          (ThemeMode.dark, l.themeDark, null),
-                          (ThemeMode.system, l.themeSystem, null),
-                        ],
-                        onChanged: ctrl.setThemeMode,
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsetsDirectional.only(start: AppSpacing.rowHorizontal, end: 8),
+                child: SwitchRow(
+                  leading: _IconCircle('bell', fg: c.lilac, bg: c.lilacBg),
+                  title: l.notifications,
+                  value: s.notificationsEnabled,
+                  onChanged: (v) async {
+                    ctrl.setNotifications(v);
+                    if (v) await ref.read(notificationServiceProvider).requestPermission();
+                  },
                 ),
               ),
+              NavRow(
+                icon: 'clock',
+                iconFg: c.flame,
+                iconBg: c.flameFill,
+                title: l.remindersTitle,
+                value: l.activeCount('$remindersOn'),
+                onTap: () => context.push(Routes.reminders),
+              ),
+              NavRow(
+                icon: 'moonQuiet',
+                iconFg: c.avatarFg,
+                iconBg: c.avatarBg,
+                title: l.quietHours,
+                value: s.quietEnabled ? '${l.time(s.quietStart)} – ${l.time(s.quietEnd)}' : l.quietOff,
+                onTap: () => editQuietHours(context, ref),
+              ),
             ]),
-            section(l.sectionData, [
+            group(l.sectionPreferences, [
+              NavRow(
+                icon: 'calendar',
+                iconFg: c.goodText,
+                iconBg: c.goodSoft,
+                title: l.weekStart,
+                value: _weekStartName(context, s.weekStart),
+                onTap: () => _pickWeekStart(context, ref),
+              ),
+            ]),
+            group(l.sectionData, [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.rowHorizontal, vertical: AppSpacing.rowVertical),
                 child: Row(children: [
-                  AppIcon(pending == 0 ? 'check' : 'clock', color: pending == 0 ? c.goodText : c.flame, strokeWidth: 2),
-                  const SizedBox(width: 12),
+                  _IconCircle(pending == 0 ? 'check' : 'clock',
+                      fg: pending == 0 ? c.goodText : c.flame, bg: pending == 0 ? c.goodSoft : c.flameFill),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Text(pending == 0 ? l.syncedAll : l.pendingSync('$pending'),
-                        style: TextStyle(fontSize: 14, color: pending == 0 ? c.sub : c.text)),
+                        style: t.bodyMedium.copyWith(color: pending == 0 ? c.sub : c.text)),
                   ),
                 ]),
               ),
-              actionRow(l.exportData, 'download', c.text, () => _export(context, ref)),
-              actionRow(l.seedData, 'plus', c.goodText, () {
-                ref.read(appDataControllerProvider.notifier).addSampleData(l);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.seedDone)));
-              }),
-              actionRow(l.signOut, 'logout', c.text, () => ref.read(appDataControllerProvider.notifier).signOut()),
-              actionRow(l.deleteAccount, 'trash', c.badText, () => _deleteAccount(context, ref)),
+              NavRow(icon: 'download', title: l.exportData, onTap: () => _export(context, ref)),
+              NavRow(
+                icon: 'plus',
+                iconFg: c.lilac,
+                iconBg: c.lilacBg,
+                title: l.seedData,
+                onTap: () {
+                  ref.read(appDataControllerProvider.notifier).addSampleData(l);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.seedDone)));
+                },
+              ),
             ]),
-            const SizedBox(height: 20),
-            Text(l.versionLine(appVersion), textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: c.faint)),
+            const SizedBox(height: 22),
+            AppButton(
+              label: l.signOut,
+              icon: 'logout',
+              variant: AppButtonVariant.danger,
+              onPressed: () => ref.read(appDataControllerProvider.notifier).signOut(),
+            ),
+            const SizedBox(height: 6),
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(foregroundColor: c.badText),
+                onPressed: () => _deleteAccount(context, ref),
+                child: Text(l.deleteAccount),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(l.versionLine(appVersion), textAlign: TextAlign.center, style: t.caption.copyWith(color: c.faint)),
           ],
         ),
       ),
@@ -262,27 +289,47 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _pickWeekStart(BuildContext context, WidgetRef ref) {
-    final cur = ref.read(settingsControllerProvider).weekStart;
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      builder: (ctx) => SafeArea(
-        child: RadioGroup<WeekStart>(
-          groupValue: cur,
-          onChanged: (v) {
-            if (v != null) ref.read(settingsControllerProvider.notifier).setWeekStart(v);
-            Navigator.pop(ctx);
-          },
+      builder: (ctx) => Consumer(builder: (ctx, ref, _) {
+        final cur = ref.watch(settingsControllerProvider).weekStart;
+        return AppBottomSheet(
+          title: context.l10n.weekStart,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              for (final w in WeekStart.values) RadioListTile<WeekStart>(value: w, title: Text(_weekStartName(context, w))),
-              const SizedBox(height: 8),
+              for (final w in WeekStart.values) ...[
+                PickerPill(
+                  label: _weekStartName(context, w),
+                  selected: w == cur,
+                  onTap: () {
+                    ref.read(settingsControllerProvider.notifier).setWeekStart(w);
+                    Navigator.pop(ctx);
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
+}
+
+/// Tinted round icon (44) used at the start of settings rows.
+class _IconCircle extends StatelessWidget {
+  const _IconCircle(this.icon, {required this.fg, required this.bg});
+  final String icon;
+  final Color fg, bg;
+  @override
+  Widget build(BuildContext context) => Container(
+        width: AppSizes.rowIcon,
+        height: AppSizes.rowIcon,
+        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+        alignment: Alignment.center,
+        child: AppIcon(icon, size: 20, color: fg, strokeWidth: 1.9),
+      );
 }
 
 class _Pill extends StatelessWidget {
@@ -294,9 +341,9 @@ class _Pill extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-        decoration: BoxDecoration(color: c.chip, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: c.field, borderRadius: AppRadii.pillAll),
         child: Text(text, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            style: context.text.caption.copyWith(fontWeight: FontWeight.w600, color: c.textSecondary, height: 1.3)),
       ),
     );
   }

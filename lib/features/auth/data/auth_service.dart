@@ -12,12 +12,22 @@ part 'auth_service.g.dart';
 /// The signed-in user, independent of the auth SDK.
 @immutable
 class AuthUser {
-  const AuthUser({required this.id, required this.email, required this.fullName, this.photoUrl, required this.createdAt});
+  const AuthUser({
+    required this.id,
+    required this.email,
+    required this.fullName,
+    this.photoUrl,
+    required this.createdAt,
+    this.provider = 'google',
+  });
   final String id;
   final String email;
   final String fullName;
   final String? photoUrl;
   final DateTime createdAt;
+
+  /// How the account signs in: 'google' or 'email'.
+  final String provider;
 
   /// First name for greetings.
   String get firstName => fullName.trim().isEmpty ? email.split('@').first : fullName.trim().split(RegExp(r'\s+')).first;
@@ -28,7 +38,23 @@ class AuthUser {
   int get hashCode => id.hashCode;
 }
 
-enum SignInError { notConfigured, cancelled, network, failed }
+enum SignInError {
+  notConfigured,
+  cancelled,
+  network,
+  failed,
+
+  /// Email sign-in: the code is wrong or has expired.
+  invalidCode,
+
+  /// Too many codes requested; wait before asking again.
+  rateLimited,
+
+  /// The project's email sender refused this address (Supabase's built-in
+  /// sender only delivers to the organization's team members).
+  emailNotAuthorized,
+  invalidEmail,
+}
 
 class SignInException implements Exception {
   const SignInException(this.kind, [this.detail]);
@@ -42,6 +68,13 @@ abstract class AuthService {
   AuthUser? get currentUser;
   Stream<AuthUser?> userChanges();
   Future<void> signInWithGoogle();
+
+  /// Emails a one-time code. Creates the account if this email is new.
+  Future<void> sendEmailCode(String email);
+
+  /// Checks the code; on success the user is signed in.
+  Future<void> verifyEmailCode(String email, String code);
+
   Future<void> signOut();
 }
 
@@ -54,7 +87,9 @@ class SupabaseAuthService implements AuthService {
   static AuthUser? _map(User? u) {
     if (u == null) return null;
     final m = u.userMetadata ?? const {};
+    final provider = (u.appMetadata['provider'] as String?) ?? 'email';
     return AuthUser(
+      provider: provider,
       id: u.id,
       email: u.email ?? (m['email'] as String? ?? ''),
       fullName: (m['full_name'] ?? m['name'] ?? '') as String,
@@ -96,6 +131,36 @@ class SupabaseAuthService implements AuthService {
     } on AuthException catch (e) {
       throw SignInException(SignInError.failed, e);
     }
+  }
+
+  @override
+  Future<void> sendEmailCode(String email) async {
+    try {
+      await _client.auth.signInWithOtp(email: email.trim().toLowerCase(), shouldCreateUser: true);
+    } on AuthException catch (e) {
+      throw _mapEmailError(e);
+    }
+  }
+
+  @override
+  Future<void> verifyEmailCode(String email, String code) async {
+    try {
+      await _client.auth.verifyOTP(email: email.trim().toLowerCase(), token: code.trim(), type: OtpType.email);
+    } on AuthException catch (e) {
+      throw _mapEmailError(e);
+    }
+  }
+
+  static SignInException _mapEmailError(AuthException e) {
+    if (e is AuthRetryableFetchException) return SignInException(SignInError.network, e);
+    final kind = switch (e.code) {
+      'otp_expired' || 'otp_disabled' => SignInError.invalidCode,
+      'over_email_send_rate_limit' || 'over_request_rate_limit' => SignInError.rateLimited,
+      'email_address_not_authorized' => SignInError.emailNotAuthorized,
+      'email_address_invalid' || 'validation_failed' => SignInError.invalidEmail,
+      _ => e.statusCode == '429' ? SignInError.rateLimited : SignInError.failed,
+    };
+    return SignInException(kind, e);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/achievements/presentation/achievements_screen.dart';
+import '../../features/auth/presentation/email_sign_in_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/habits/application/habits_controller.dart';
@@ -21,6 +22,7 @@ part 'app_router.g.dart';
 abstract final class Routes {
   static const splash = '/splash';
   static const signIn = '/sign-in';
+  static const signInEmail = '/sign-in/email';
   static const today = '/today';
   static const progress = '/progress';
   static const achievements = '/achievements';
@@ -59,13 +61,14 @@ GoRouter router(Ref ref) {
       final loc = state.matchedLocation;
       if (!data.hasValue) return loc == Routes.splash ? null : Routes.splash;
       final signedIn = data.value!.signedIn;
-      if (!signedIn) return loc == Routes.signIn ? null : Routes.signIn;
-      if (loc == Routes.signIn || loc == Routes.splash) return Routes.today;
+      if (!signedIn) return loc.startsWith(Routes.signIn) ? null : Routes.signIn;
+      if (loc.startsWith(Routes.signIn) || loc == Routes.splash) return Routes.today;
       return null;
     },
     routes: [
       GoRoute(path: Routes.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: Routes.signIn, builder: (_, _) => const SignInScreen()),
+      GoRoute(path: Routes.signInEmail, builder: (_, _) => const EmailSignInScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

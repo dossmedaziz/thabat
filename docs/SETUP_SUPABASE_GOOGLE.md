@@ -1,4 +1,4 @@
-# Thabat — Supabase + Google sign-in setup
+# Thabat — Supabase, Google and email sign-in setup
 
 Back to the [README](../README.md).
 
@@ -64,6 +64,33 @@ client's *reversed client ID* as a URL scheme in `ios/Runner/Info.plist`
 Without `GOOGLE_WEB_CLIENT_ID` the app still builds, but the sign-in button shows
 "Google sign-in isn't configured in this build yet".
 
+## 4. Email sign-in (one-time code)
+
+Users can also sign in or create an account with just their email: the app emails
+a code, they type it in, and they're in. No password. Two dashboard settings make it work.
+
+**a. Send a code instead of a link.** Supabase dashboard → project **thabat** →
+**Authentication → Emails → Templates → Magic link**. Replace the body with something like:
+
+```html
+<h2>رمز الدخول إلى ثبات · Your Thabat code</h2>
+<p>{{ .Token }}</p>
+<p>ينتهي خلال ساعة · Expires in one hour.</p>
+```
+
+`{{ .Token }}` is the code. If the template still contains `{{ .ConfirmationURL }}`
+instead, users get a link the app can't use. The code length is set under
+**Authentication → Sign In / Providers → Email → Email OTP length** (the app accepts 6–10 digits).
+
+**b. Let Supabase email real users.** Supabase's built-in sender only delivers to
+members of your Supabase organization (your own address works for testing) and only a
+few emails per hour. Anyone else gets "We can't send a code to this address right now".
+Before inviting users, connect an email service under **Authentication → Emails → SMTP
+Settings**, for example [Resend](https://resend.com/docs/send-with-supabase-smtp) or Brevo
+(both have free tiers). Then raise the limit under **Authentication → Rate Limits**.
+
+Nothing needs to change in the app for either step.
+
 ## Checklist
 
 - [ ] Google Cloud: OAuth consent screen set up, your Gmail added as a test user
@@ -71,11 +98,17 @@ Without `GOOGLE_WEB_CLIENT_ID` the app still builds, but the sign-in button show
 - [ ] Google Cloud: **Android** client, package `com.thabat.thabat`, SHA-1 of the key that signs the APK
 - [ ] Supabase (project **thabat**, not myapp): Google enabled, Web + Android client IDs and the Web secret saved
 - [ ] APK built with `--dart-define=GOOGLE_WEB_CLIENT_ID=...`
+- [ ] Email: Magic link template contains `{{ .Token }}`
+- [ ] Email: custom SMTP connected before real users sign up (built-in sender only reaches your team)
 
 ## Troubleshooting sign-in
 
 | What you see | Likely cause |
 |---|---|
+| The email contains a link, not a code | The Magic link template doesn't include `{{ .Token }}` (step 4a) |
+| "We can't send a code to this address right now" | No custom SMTP yet, and the address isn't a member of your Supabase organization (step 4b) |
+| "Too many attempts" | One code per address per 60 s, plus the hourly email limit |
+| "That code is wrong or has expired" | Typo, an older code, or the code is past its expiry; tap **Resend code** |
 | "Google sign-in isn't configured in this build yet" | The APK was built without `--dart-define=GOOGLE_WEB_CLIENT_ID=...` |
 | The Google account picker closes immediately, or "sign-in failed" | The Android client's package name or SHA-1 doesn't match the APK, or your account isn't a test user on the consent screen |
 | "sign-in failed" right after picking an account | Google isn't enabled in the Supabase **thabat** project, or the client IDs / secret there are wrong |

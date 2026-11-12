@@ -1042,4 +1042,94 @@ class AppLocalizationsFr extends AppLocalizations {
   String scheduledCount(String count) {
     return '$count notifications programmées sur cet appareil';
   }
+
+  @override
+  String get continueWithEmail => 'Continuer avec l’e-mail';
+
+  @override
+  String get orDivider => 'ou';
+
+  @override
+  String get emailTitle => 'Connexion par e-mail';
+
+  @override
+  String get emailSubtitle =>
+      'Nous vous enverrons un code de vérification. Si vous n’avez pas de compte, il sera créé.';
+
+  @override
+  String get emailLabel => 'E-mail';
+
+  @override
+  String get emailInvalid => 'Saisissez une adresse e-mail valide';
+
+  @override
+  String get sendCode => 'Envoyer le code';
+
+  @override
+  String get codeTitle => 'Saisissez le code';
+
+  @override
+  String codeSentTo(String email) {
+    return 'Nous avons envoyé un code à $email. Vérifiez aussi vos spams.';
+  }
+
+  @override
+  String get codeLabel => 'Code de vérification';
+
+  @override
+  String get codeRequired => 'Saisissez le code reçu';
+
+  @override
+  String get verifyCode => 'Vérifier et se connecter';
+
+  @override
+  String get resendCode => 'Renvoyer le code';
+
+  @override
+  String resendIn(String seconds) {
+    return 'Renvoyer dans $seconds s';
+  }
+
+  @override
+  String get changeEmail => 'Changer d’e-mail';
+
+  @override
+  String get codeResent => 'Nouveau code envoyé.';
+
+  @override
+  String get codeInvalid => 'Code incorrect ou expiré.';
+
+  @override
+  String get codeRateLimited =>
+      'Trop de tentatives. Patientez un peu et réessayez.';
+
+  @override
+  String get emailNotAuthorized =>
+      'Impossible d’envoyer un code à cette adresse pour le moment. Réessayez plus tard ou utilisez Google.';
+
+  @override
+  String get signedInWithEmail => 'Connecté par e-mail';
+
+  @override
+  String get todayProgress => 'Progrès du jour';
+
+  @override
+  String ofTotal(String total) {
+    return 'sur $total';
+  }
+
+  @override
+  String get allDoneToday => 'Tout est fait aujourd’hui';
+
+  @override
+  String get colorGreen => 'Vert';
+
+  @override
+  String get colorOrange => 'Orange';
+
+  @override
+  String get colorRed => 'Rouge';
+
+  @override
+  String get colorYellow => 'Jaune';
 }

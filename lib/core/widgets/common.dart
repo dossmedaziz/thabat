@@ -4,11 +4,22 @@ import 'package:flutter/material.dart';
 
 import '../l10n/l10n_x.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
+import '../theme/app_tokens.dart';
+import 'app_button.dart';
 import 'app_icon.dart';
+import 'pressable.dart';
 
-/// Rounded white card with the design's soft shadow.
+/// Flat card (r22, card surface, no shadow). Tappable cards scale on press.
 class AppCard extends StatelessWidget {
-  const AppCard({super.key, required this.child, this.padding = const EdgeInsetsDirectional.all(16), this.color, this.radius = 20, this.onTap});
+  const AppCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsetsDirectional.all(16),
+    this.color,
+    this.radius = AppRadii.listCard,
+    this.onTap,
+  });
   final Widget child;
   final EdgeInsetsGeometry padding;
   final Color? color;
@@ -17,23 +28,43 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final box = Container(
+      padding: padding,
+      decoration: BoxDecoration(color: color ?? context.colors.card, borderRadius: BorderRadius.circular(radius)),
+      child: child,
+    );
+    return onTap == null ? box : Pressable(onTap: onTap, scale: .98, child: box);
+  }
+}
+
+/// Several rows in one card, separated by hairlines (Cashflow's grouped list).
+class GroupedCard extends StatelessWidget {
+  const GroupedCard({super.key, required this.children, this.color});
+  final List<Widget> children;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
     final c = context.colors;
-    final br = BorderRadius.circular(radius);
-    return DecoratedBox(
-      decoration: BoxDecoration(color: color ?? c.card, borderRadius: br, boxShadow: c.shadow),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: br,
-          onTap: onTap,
-          child: Padding(padding: padding, child: child),
+    return ClipRRect(
+      borderRadius: AppRadii.listCardAll,
+      child: ColoredBox(
+        color: color ?? c.card,
+        child: Column(
+          children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) Divider(height: 1, thickness: 1, color: c.line, indent: 72, endIndent: 0),
+              children[i],
+            ],
+          ],
         ),
       ),
     );
   }
 }
 
-/// Segmented control from the design (track + raised selected segment).
+/// Segmented control: card-colored track (r18, 4 px padding), 44-px segments,
+/// the selected one solid indigo.
 class Segmented<T> extends StatelessWidget {
   const Segmented({
     super.key,
@@ -42,6 +73,7 @@ class Segmented<T> extends StatelessWidget {
     required this.onChanged,
     this.height = 44,
     this.semanticLabel,
+    this.trackColor,
   });
   final T value;
   final List<(T, String, Color?)> items;
@@ -49,55 +81,69 @@ class Segmented<T> extends StatelessWidget {
   final double height;
   final String? semanticLabel;
 
+  /// Track color; defaults to the card surface (use the field color on cards).
+  final Color? trackColor;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    final duration = AppMotion.of(context, AppMotion.toggle);
     return Semantics(
       label: semanticLabel,
       container: true,
       child: Container(
         padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(color: c.track, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(color: trackColor ?? c.card, borderRadius: BorderRadius.circular(18)),
         child: Row(
           children: [
-            for (final (v, label, dot) in items)
+            for (var i = 0; i < items.length; i++) ...[
+              if (i > 0) const SizedBox(width: 4),
               Expanded(
-                child: Semantics(
-                  selected: v == value,
-                  button: true,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => onChanged(v),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      constraints: BoxConstraints(minHeight: height),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: v == value ? c.segOn : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: v == value ? const [BoxShadow(color: Color(0x1F000000), blurRadius: 3, offset: Offset(0, 1))] : null,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (dot != null) ...[
-                            Container(width: 8, height: 8, decoration: BoxDecoration(color: dot, shape: BoxShape.circle)),
-                            const SizedBox(width: 8),
-                          ],
-                          Flexible(
-                            child: Text(
-                              label,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: v == value ? c.text : c.sub),
+                child: Pressable(
+                  onTap: () => onChanged(items[i].$1),
+                  selected: items[i].$1 == value,
+                  semanticLabel: items[i].$2,
+                  child: AnimatedContainer(
+                    duration: duration,
+                    curve: AppMotion.ease,
+                    constraints: BoxConstraints(minHeight: height),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: items[i].$1 == value ? c.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (items[i].$3 != null) ...[
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: items[i].$1 == value ? c.onPrimary : items[i].$3,
+                              shape: BoxShape.circle,
                             ),
                           ),
+                          const SizedBox(width: 8),
                         ],
-                      ),
+                        Flexible(
+                          child: AnimatedDefaultTextStyle(
+                            duration: duration,
+                            style: context.text.body.copyWith(
+                              fontSize: 14,
+                              height: 1.2,
+                              color: items[i].$1 == value ? c.onPrimary : c.sub,
+                            ),
+                            child: Text(items[i].$2, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -121,8 +167,8 @@ class ProgressRing extends StatelessWidget {
       height: size,
       child: TweenAnimationBuilder<double>(
         tween: Tween(end: value.clamp(0, 1)),
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
+        duration: AppMotion.of(context, const Duration(milliseconds: 500)),
+        curve: AppMotion.ease,
         builder: (context, v, _) => CustomPaint(
           painter: _RingPainter(v, color, track, stroke, rtl),
           child: Center(child: child),
@@ -143,19 +189,21 @@ class _RingPainter extends CustomPainter {
     final r = (size.shortestSide - stroke) / 2;
     final center = size.center(Offset.zero);
     final rect = Rect.fromCircle(center: center, radius: r);
-    final base = Paint()
-      ..color = track
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke;
-    canvas.drawCircle(center, r, base);
+    canvas.drawCircle(
+      center,
+      r,
+      Paint()
+        ..color = track
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke,
+    );
     if (v <= 0) return;
     final p = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = stroke;
-    final sweep = 2 * math.pi * v * (rtl ? -1 : 1);
-    canvas.drawArc(rect, -math.pi / 2, sweep, false, p);
+    canvas.drawArc(rect, -math.pi / 2, 2 * math.pi * v * (rtl ? -1 : 1), false, p);
   }
 
   @override
@@ -179,7 +227,8 @@ class DirectionalBar extends StatelessWidget {
         alignment: AlignmentDirectional.centerStart,
         child: TweenAnimationBuilder<double>(
           tween: Tween(end: value.clamp(0, 1)),
-          duration: const Duration(milliseconds: 400),
+          duration: AppMotion.of(context, const Duration(milliseconds: 400)),
+          curve: AppMotion.ease,
           builder: (_, v, _) => FractionallySizedBox(
             widthFactor: v,
             child: Container(decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(height / 2))),
@@ -190,7 +239,7 @@ class DirectionalBar extends StatelessWidget {
   }
 }
 
-/// 44×44 round icon button on a card background.
+/// 44×44 round icon button on the card surface.
 class RoundIconButton extends StatelessWidget {
   const RoundIconButton({super.key, required this.icon, required this.onTap, required this.tooltip, this.size = 44});
   final String icon;
@@ -199,52 +248,32 @@ class RoundIconButton extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    return Tooltip(
-      message: tooltip,
-      child: Semantics(
-        button: true,
-        label: tooltip,
-        excludeSemantics: true,
-        child: Material(
-          color: c.card,
-          shape: const CircleBorder(),
-          elevation: 0,
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: Container(
-              width: size,
-              height: size,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: c.shadow),
-              child: AppIcon(icon, size: 22, color: c.text, strokeWidth: 2),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      CircleIconButton(icon: icon, onPressed: onTap, semanticLabel: tooltip, size: size);
 }
 
-/// Colored tile holding the habit glyph.
+/// Habit glyph on a tinted circle (44 in rows, larger in headers).
 class HabitTile extends StatelessWidget {
-  const HabitTile({super.key, required this.glyph, required this.bg, required this.fg, this.size = 48, this.radius = 15});
+  const HabitTile({super.key, required this.glyph, required this.bg, required this.fg, this.size = AppSizes.rowIcon, this.radius});
   final String glyph;
   final Color bg, fg;
-  final double size, radius;
+  final double size;
+
+  /// Ignored: habit badges are always round (kept for older call sites).
+  final double? radius;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => AnimatedContainer(
+        duration: AppMotion.of(context, AppMotion.toggle),
         width: size,
         height: size,
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(radius)),
-        child: HabitGlyph(glyph, size: size / 2, color: fg),
+        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+        child: HabitGlyph(glyph, size: size * 20 / 44, color: fg),
       );
 }
 
+/// Small neutral pill.
 class Chip2 extends StatelessWidget {
   const Chip2(this.label, {super.key, this.bg, this.fg, this.bold = false});
   final String label;
@@ -254,13 +283,19 @@ class Chip2 extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 1),
-      decoration: BoxDecoration(color: bg ?? c.chip, borderRadius: BorderRadius.circular(8)),
-      child: Text(label, style: TextStyle(fontSize: 12, fontWeight: bold ? FontWeight.w700 : FontWeight.w600, color: fg ?? c.sub)),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: bg ?? c.field, borderRadius: AppRadii.pillAll),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: context.text.badge.copyWith(fontWeight: bold ? FontWeight.w700 : FontWeight.w600, color: fg ?? c.sub),
+      ),
     );
   }
 }
 
+/// Group header above a list: label at the start, muted note at the end.
 class SectionTitle extends StatelessWidget {
   const SectionTitle(this.text, {super.key, this.trailing, this.color});
   final String text;
@@ -268,15 +303,28 @@ class SectionTitle extends StatelessWidget {
   final Color? color;
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 6),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Expanded(child: Text(text, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color ?? context.colors.text))),
+            Expanded(
+              child: Text(text, style: context.text.body.copyWith(fontWeight: FontWeight.w700, color: color ?? context.colors.text)),
+            ),
             ?trailing,
           ],
         ),
+      );
+}
+
+/// Muted label above a group of controls (Settings).
+class FieldLabel extends StatelessWidget {
+  const FieldLabel(this.text, {super.key});
+  final String text;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsetsDirectional.only(start: 6, bottom: 10),
+        child: Text(text, style: context.text.label),
       );
 }
 
@@ -286,7 +334,7 @@ class LoadingView extends StatelessWidget {
   Widget build(BuildContext context) => Center(
         child: Semantics(
           label: context.l10n.loading,
-          child: CircularProgressIndicator(color: context.colors.good),
+          child: const SizedBox.square(dimension: 28, child: CircularProgressIndicator(strokeWidth: 2.5)),
         ),
       );
 }
@@ -297,17 +345,24 @@ class ErrorView extends StatelessWidget {
   final String? message;
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
     final l = context.l10n;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppIcon('ban', size: 40, color: context.colors.sub),
-            const SizedBox(height: 12),
-            Text(message ?? l.errorGeneric, textAlign: TextAlign.center),
-            if (onRetry != null) TextButton(onPressed: onRetry, child: Text(l.retry)),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(color: c.badSoft, shape: BoxShape.circle),
+              alignment: Alignment.center,
+              child: AppIcon('ban', size: 24, color: c.badText),
+            ),
+            const SizedBox(height: 14),
+            Text(message ?? l.errorGeneric, textAlign: TextAlign.center, style: context.text.body),
+            if (onRetry != null) ...[const SizedBox(height: 8), TextButton(onPressed: onRetry, child: Text(l.retry))],
           ],
         ),
       ),
@@ -315,7 +370,7 @@ class ErrorView extends StatelessWidget {
   }
 }
 
-/// Settings-style switch row.
+/// Row with a title, optional subtitle and a switch.
 class SwitchRow extends StatelessWidget {
   const SwitchRow({super.key, required this.title, this.subtitle, required this.value, required this.onChanged, this.leading});
   final String title;
@@ -327,10 +382,11 @@ class SwitchRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return MergeSemantics(
-      child: InkWell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onChanged == null ? null : () => onChanged!(!value),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 56),
+          constraints: const BoxConstraints(minHeight: 60),
           child: Row(
             children: [
               if (leading != null) ...[leading!, const SizedBox(width: 12)],
@@ -339,14 +395,59 @@ class SwitchRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                    if (subtitle != null) Text(subtitle!, style: TextStyle(fontSize: 13, color: c.sub)),
+                    Text(title, style: context.text.body),
+                    if (subtitle != null) Text(subtitle!, style: context.text.subtitle.copyWith(color: c.sub)),
                   ],
                 ),
               ),
               Switch(value: value, onChanged: onChanged),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Settings-style row: tinted icon circle · title · value · chevron.
+class NavRow extends StatelessWidget {
+  const NavRow({super.key, required this.title, required this.onTap, this.value, this.icon, this.iconFg, this.iconBg, this.titleColor});
+  final String title;
+  final String? value;
+  final VoidCallback onTap;
+  final String? icon;
+  final Color? iconFg, iconBg, titleColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Pressable(
+      onTap: onTap,
+      semanticLabel: value == null ? title : '$title, $value',
+      scale: .98,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.rowHorizontal, vertical: AppSpacing.rowVertical),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              Container(
+                width: AppSizes.rowIcon,
+                height: AppSizes.rowIcon,
+                decoration: BoxDecoration(color: iconBg ?? c.field, shape: BoxShape.circle),
+                alignment: Alignment.center,
+                child: AppIcon(icon!, size: 20, color: iconFg ?? c.text, strokeWidth: 1.9),
+              ),
+              const SizedBox(width: 14),
+            ],
+            Expanded(child: Text(title, style: context.text.body.copyWith(fontSize: 16, color: titleColor))),
+            if (value != null) ...[
+              Flexible(
+                child: Text(value!, maxLines: 1, overflow: TextOverflow.ellipsis, style: context.text.bodyMedium.copyWith(color: c.sub)),
+              ),
+              const SizedBox(width: 6),
+            ],
+            AppIcon('forward', size: 18, color: c.faint, strokeWidth: 2),
+          ],
         ),
       ),
     );

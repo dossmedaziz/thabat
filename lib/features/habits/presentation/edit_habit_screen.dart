@@ -8,8 +8,13 @@ import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/chips.dart';
 import '../../../core/widgets/common.dart';
 import '../../notifications/notification_service.dart';
+import '../../notifications/presentation/reminders_screen.dart';
 import '../../settings/application/settings_controller.dart';
 import '../application/habits_controller.dart';
 import '../domain/models.dart';
@@ -39,7 +44,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
   Habit? _original;
   HabitType _type = HabitType.good;
   String _glyph = 'icon:target';
-  String _color = HabitPalette.all.first.hex;
+  String _color = HabitPalette.goodDefault;
   Frequency _freq = Frequency.daily;
   bool _weeklyDays = false;
   int _times = 3;
@@ -85,7 +90,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
         case 'water':
           _name.text = l.seedWater;
           _glyph = 'icon:water';
-          _color = '#3B7BE8';
+          _color = '#93C5FD';
         case 'read':
           _name.text = l.seedRead;
           _glyph = 'icon:read';
@@ -93,7 +98,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
           _type = HabitType.bad;
           _name.text = l.seedSoda;
           _glyph = 'icon:soda';
-          _color = '#F0715A';
+          _color = HabitPalette.badDefault;
       }
     }
   }
@@ -101,7 +106,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
   void _applyTypeDefaults() {
     final good = _type == HabitType.good;
     _glyph = good ? 'icon:target' : 'icon:ban';
-    _color = good ? '#14A383' : '#F0715A';
+    _color = good ? HabitPalette.goodDefault : HabitPalette.badDefault;
     _goal = null;
   }
 
@@ -279,27 +284,41 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
     final quiet = settings.quietEnabled && inQuietWindow(_remTime, settings.quietStart, settings.quietEnd);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: l.back,
-          onPressed: () => context.canPop() ? context.pop() : context.go(Routes.today),
-          icon: AppIcon('back', color: c.text, strokeWidth: 2),
-        ),
-        title: Text(_original == null ? l.newHabit : l.editHabit, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-      ),
-      body: Form(
+      backgroundColor: c.card,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Sheet-style header (Cashflow): close · title · delete.
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 8),
+              child: SheetHeader(
+                title: _original == null ? l.newHabit : l.editHabit,
+                onClose: () => context.canPop() ? context.pop() : context.go(Routes.today),
+                trailing: _original == null
+                    ? null
+                    : CircleIconButton(icon: 'trash', style: CircleButtonStyle.danger, iconSize: 18, semanticLabel: l.deleteHabit, onPressed: _delete),
+              ),
+            ),
+            Expanded(
+              child: Form(
         key: _form,
         autovalidateMode: _showErrors ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled,
         child: ListView(
           padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 24),
           children: [
             // ---- type ----
-            Row(
-              children: [
-                Expanded(child: _TypeCard(selected: _good, good: true, onTap: () => setState(() { _type = HabitType.good; _applyTypeDefaults(); }))),
-                const SizedBox(width: 10),
-                Expanded(child: _TypeCard(selected: !_good, good: false, onTap: () => setState(() { _type = HabitType.bad; _applyTypeDefaults(); }))),
-              ],
+            Segmented<HabitType>(
+              value: _type,
+              trackColor: c.field,
+              items: [(HabitType.good, l.typeGoodTitle, c.good), (HabitType.bad, l.typeBadTitle, c.bad)],
+              onChanged: (t) => setState(() {
+                _type = t;
+                _applyTypeDefaults();
+              }),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: 8, start: 6),
+              child: Text(_good ? l.typeGoodSub : l.typeBadSub, style: context.text.subtitle),
             ),
             const SizedBox(height: 20),
             // ---- name ----
@@ -307,7 +326,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                HabitTile(glyph: _glyph, bg: tileBg, fg: tileFg, size: 52, radius: 16),
+                HabitTile(glyph: _glyph, bg: tileBg, fg: tileFg, size: 52),
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextFormField(
@@ -336,6 +355,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
                   child: Segmented<bool>(
                     value: _emojiTab,
                     height: 34,
+                    trackColor: c.field,
                     items: [(false, l.iconsTab, null), (true, l.emojiTab, null)],
                     onChanged: (v) => setState(() => _emojiTab = v),
                   ),
@@ -362,8 +382,8 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: g == _glyph ? tileBg : c.field,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: g == _glyph ? palette.dot : Colors.transparent, width: 2),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: g == _glyph ? tileFg : Colors.transparent, width: 1.5),
                         ),
                         child: HabitGlyph(g, size: 22, color: g == _glyph ? tileFg : c.sub),
                       ),
@@ -374,11 +394,13 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
             const SizedBox(height: 20),
             // ---- color ----
             label(l.colorLabel),
-            Row(
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
               children: [
                 for (final p in HabitPalette.all)
                   Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 10),
+                    padding: EdgeInsetsDirectional.zero,
                     child: Semantics(
                       button: true,
                       selected: p.hex == palette.hex,
@@ -392,7 +414,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: p.hex == palette.hex ? p.dot : Colors.transparent, width: 2.5),
+                            border: Border.all(color: p.hex == palette.hex ? c.text : Colors.transparent, width: 2),
                           ),
                           child: DecoratedBox(decoration: BoxDecoration(color: p.dot, shape: BoxShape.circle)),
                         ),
@@ -406,6 +428,7 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
             label(l.frequencyLabel),
             Segmented<Frequency>(
               value: _freq,
+              trackColor: c.field,
               items: [
                 (Frequency.daily, l.freqDaily, null),
                 (Frequency.weekly, l.freqWeekly, null),
@@ -471,21 +494,9 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
                   ),
                   if (_remOn) ...[
                     const Divider(),
-                    InkWell(
-                      onTap: _pickTime,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: 52),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(l.reminderTime, style: const TextStyle(fontWeight: FontWeight.w600))),
-                            Container(
-                              padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 8),
-                              decoration: BoxDecoration(color: c.field, borderRadius: BorderRadius.circular(12)),
-                              child: Text(l.time(_remTime), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                            ),
-                          ],
-                        ),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: TimeRow(label: l.reminderTime, value: l.time(_remTime), onTap: _pickTime),
                     ),
                     if (quiet) _ErrorText(l.reminderQuietWarning, color: c.sub),
                     const SizedBox(height: 8),
@@ -514,20 +525,15 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
             label(l.noteLabel, extra: l.optional),
             TextField(controller: _note, minLines: 3, maxLines: 5, maxLength: 300, decoration: const InputDecoration(counterText: '')),
             const SizedBox(height: 24),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: _good ? c.goodBtn : c.bad, foregroundColor: onAccent),
+            AppButton(
+              label: _original == null ? l.createHabit : l.saveChanges,
+              icon: _original == null ? 'plus' : 'check',
               onPressed: _save,
-              child: Text(_original == null ? l.createHabit : l.saveChanges),
             ),
-            if (_original != null) ...[
-              const SizedBox(height: 8),
-              TextButton.icon(
-                style: TextButton.styleFrom(foregroundColor: c.badText),
-                onPressed: _delete,
-                icon: AppIcon('trash', size: 20, color: c.badText, strokeWidth: 2),
-                label: Text(l.deleteHabit),
+          ],
+        ),
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -538,50 +544,15 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
 String _colorName(BuildContext context, String id) {
   final l = context.l10n;
   return switch (id) {
+    'green' => l.colorGreen,
     'teal' => l.colorTeal,
     'blue' => l.colorBlue,
-    'purple' => l.colorPurple,
-    'coral' => l.colorCoral,
-    'amber' => l.colorAmber,
-    _ => l.colorPink,
+    'violet' => l.colorPurple,
+    'pink' => l.colorPink,
+    'red' => l.colorRed,
+    'orange' => l.colorOrange,
+    _ => l.colorYellow,
   };
-}
-
-class _TypeCard extends StatelessWidget {
-  const _TypeCard({required this.selected, required this.good, required this.onTap});
-  final bool selected, good;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    final l = context.l10n;
-    final accent = good ? c.good : c.bad;
-    return Semantics(
-      selected: selected,
-      button: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: selected ? (good ? c.goodSoft : c.badSoft) : c.card,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: selected ? accent : c.line, width: selected ? 2 : 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppIcon(good ? 'plus' : 'ban', color: good ? c.goodText : c.badText, strokeWidth: 2.2),
-              const SizedBox(height: 6),
-              Text(good ? l.typeGoodTitle : l.typeBadTitle, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-              Text(good ? l.typeGoodSub : l.typeBadSub, style: TextStyle(fontSize: 12, color: c.sub)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _ChoicePill extends StatelessWidget {
@@ -593,22 +564,13 @@ class _ChoicePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final bg = on ? (accent ?? c.text) : c.field;
-    final fg = on ? (onAccent ?? c.card) : c.sub;
-    return Semantics(
-      button: true,
+    final a = accent ?? c.primary;
+    return PickerPill(
+      label: label,
       selected: on,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 8),
-          alignment: expand ? Alignment.center : null,
-          decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: fg)),
-        ),
-      ),
+      onTap: onTap,
+      expand: expand,
+      tone: HabitTone(fg: a, bg: a.withValues(alpha: .14), selectedBg: a.withValues(alpha: context.isDark ? .18 : .12)),
     );
   }
 }

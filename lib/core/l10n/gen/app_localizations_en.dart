@@ -1037,4 +1037,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String scheduledCount(String count) {
     return '$count notifications scheduled on this device';
   }
+
+  @override
+  String get continueWithEmail => 'Continue with email';
+
+  @override
+  String get orDivider => 'or';
+
+  @override
+  String get emailTitle => 'Sign in with email';
+
+  @override
+  String get emailSubtitle =>
+      'We’ll email you a verification code. If you don’t have an account yet, we’ll create one.';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get emailInvalid => 'Enter a valid email address';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String get codeTitle => 'Enter the code';
+
+  @override
+  String codeSentTo(String email) {
+    return 'We sent a code to $email. If you can’t find it, check your spam folder.';
+  }
+
+  @override
+  String get codeLabel => 'Verification code';
+
+  @override
+  String get codeRequired => 'Enter the code you received';
+
+  @override
+  String get verifyCode => 'Verify and sign in';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendIn(String seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get changeEmail => 'Change email';
+
+  @override
+  String get codeResent => 'We sent a new code.';
+
+  @override
+  String get codeInvalid => 'That code is wrong or has expired.';
+
+  @override
+  String get codeRateLimited =>
+      'Too many attempts. Wait a little and try again.';
+
+  @override
+  String get emailNotAuthorized =>
+      'We can’t send a code to this address right now. Try later or use Google.';
+
+  @override
+  String get signedInWithEmail => 'Signed in with email';
+
+  @override
+  String get todayProgress => 'Today’s progress';
+
+  @override
+  String ofTotal(String total) {
+    return 'of $total';
+  }
+
+  @override
+  String get allDoneToday => 'Every habit done today';
+
+  @override
+  String get colorGreen => 'Green';
+
+  @override
+  String get colorOrange => 'Orange';
+
+  @override
+  String get colorRed => 'Red';
+
+  @override
+  String get colorYellow => 'Yellow';
 }

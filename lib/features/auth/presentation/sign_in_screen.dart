@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_x.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/common.dart';
 import '../data/auth_service.dart';
 import '../../settings/application/settings_controller.dart';
 
+/// Indigo app tile with the rising-line mark (flat, like Cashflow's logo).
 class ThabatLogo extends StatelessWidget {
-  const ThabatLogo({super.key, this.size = 76});
+  const ThabatLogo({super.key, this.size = 104});
   final double size;
   @override
   Widget build(BuildContext context) {
@@ -18,14 +22,44 @@ class ThabatLogo extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: c.goodBtn,
-        borderRadius: BorderRadius.circular(size * .3),
-        boxShadow: const [BoxShadow(color: Color(0x400C8569), blurRadius: 24, offset: Offset(0, 10))],
-      ),
+      decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(size * .31)),
       alignment: Alignment.center,
       // The logo is a fixed mark, so it is not mirrored in RTL.
-      child: AppIcon('logo', size: size * .62, color: c.onGood),
+      child: AppIcon('logo', size: size * .56, color: c.onPrimary, strokeWidth: 1.6),
+    );
+  }
+}
+
+/// The logo with habit icons floating around it in their pastel tints.
+class _LogoArt extends StatelessWidget {
+  const _LogoArt();
+  @override
+  Widget build(BuildContext context) {
+    final b = Theme.of(context).brightness;
+    Widget bubble(String icon, String hex, double size) {
+      final t = HabitPalette.resolve(hex, b);
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: t.bg, shape: BoxShape.circle),
+        alignment: Alignment.center,
+        child: AppIcon(icon, size: size * .42, color: t.fg, strokeWidth: 1.9),
+      );
+    }
+
+    // Fixed composition: positions are physical so the art doesn't mirror.
+    return SizedBox(
+      width: 280,
+      height: 220,
+      child: Stack(
+        children: [
+          Positioned(left: 26, top: 20, child: bubble('water', '#93C5FD', 34)),
+          Positioned(right: 26, top: 4, child: bubble('read', '#6EE7B7', 40)),
+          Positioned(left: 4, bottom: 18, child: bubble('smoke', '#FCA5A5', 44)),
+          Positioned(right: 18, bottom: 34, child: bubble('heart', '#F9A8D4', 32)),
+          const Center(child: ThabatLogo()),
+        ],
+      ),
     );
   }
 }
@@ -53,7 +87,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         SignInError.cancelled => null,
         SignInError.notConfigured => l.signInNotConfigured,
         SignInError.network => l.signInNetwork,
-        SignInError.failed => l.signInFailed,
+        _ => l.signInFailed, // email-only errors can't happen on the Google path
       };
       if (msg != null) messenger.showSnackBar(SnackBar(content: Text(msg)));
     } catch (e) {
@@ -68,6 +102,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = context.l10n;
+    final t = context.text;
     final lang = ref.watch(settingsControllerProvider).locale;
     return Scaffold(
       body: SafeArea(
@@ -78,83 +113,40 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               constraints: BoxConstraints(minHeight: box.maxHeight - 32),
               child: Column(
                 children: [
-                  Segmented<String>(
-                    value: lang,
-                    height: 40,
-                    semanticLabel: l.sectionLanguage,
-                    items: [
-                      ('ar', l.langArabic, null),
-                      ('en', l.langEnglish, null),
-                      ('fr', l.langFrench, null),
-                    ],
-                    onChanged: ref.read(settingsControllerProvider.notifier).setLocale,
+                  // Compact language pill (Cashflow login).
+                  SizedBox(
+                    width: 200,
+                    child: Segmented<String>(
+                      value: lang,
+                      height: 36,
+                      semanticLabel: l.sectionLanguage,
+                      items: const [('ar', 'ع', null), ('fr', 'FR', null), ('en', 'EN', null)],
+                      onChanged: ref.read(settingsControllerProvider.notifier).setLocale,
+                    ),
                   ),
-                  SizedBox(height: box.maxHeight * .14),
-                  const ThabatLogo(),
-                  const SizedBox(height: 22),
-                  Text(l.appName,
-                      style: TextStyle(fontFamily: kArabicFont, fontSize: 44, fontWeight: FontWeight.w700, height: 1.25, color: c.text)),
-                  Text(l.appNameLatin,
-                      style: TextStyle(
-                          fontFamily: lang == 'ar' ? kLatinFont : kArabicFont,
-                          fontSize: 16,
-                          letterSpacing: lang == 'ar' ? 3 : 0,
-                          fontWeight: FontWeight.w600,
-                          color: c.sub)),
+                  SizedBox(height: box.maxHeight * .08),
+                  const _LogoArt(),
+                  const SizedBox(height: 20),
+                  Text(l.appName, style: t.title.copyWith(fontSize: 44, height: 1.2)),
+                  Text(l.appNameLatin, style: t.label.copyWith(letterSpacing: lang == 'ar' ? 3 : 0)),
+                  const SizedBox(height: 12),
+                  Text(l.tagline, textAlign: TextAlign.center, style: t.body.copyWith(fontSize: 18, color: c.sub, fontWeight: FontWeight.w500)),
+                  SizedBox(height: box.maxHeight * .08),
+                  AppButton.google(label: l.continueWithGoogle, onPressed: _signIn, loading: _busy),
                   const SizedBox(height: 14),
-                  Text(l.tagline, textAlign: TextAlign.center, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500, color: c.text)),
-                  SizedBox(height: box.maxHeight * .14),
-                  _GoogleButton(onTap: _signIn, busy: _busy),
-                  const SizedBox(height: 14),
-                  Text(l.signInNewHint, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.sub)),
-                  const SizedBox(height: 22),
-                  Text(l.signInPrivacy, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, height: 1.6, color: c.sub)),
+                  AppButton(
+                    label: l.continueWithEmail,
+                    icon: 'mail',
+                    variant: AppButtonVariant.secondary,
+                    height: 54,
+                    onPressed: _busy ? null : () => context.push(Routes.signInEmail),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l.signInNewHint, textAlign: TextAlign.center, style: t.subtitle),
+                  const SizedBox(height: 10),
+                  Text(l.signInPrivacy, textAlign: TextAlign.center, style: t.caption.copyWith(height: 1.6)),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.onTap, required this.busy});
-  final VoidCallback onTap;
-  final bool busy;
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    return Semantics(
-      button: true,
-      child: Material(
-        color: c.card,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: busy ? null : onTap,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 56),
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: c.line, width: 1.5),
-              boxShadow: c.shadow,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (busy)
-                  SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4, color: c.good))
-                else
-                  const GoogleLogo(),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: Text(context.l10n.continueWithGoogle,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: c.text)),
-                ),
-              ],
             ),
           ),
         ),

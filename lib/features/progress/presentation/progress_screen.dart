@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/clock.dart';
 import '../../../core/utils/dates.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/common.dart';
 import '../../habits/application/habits_controller.dart';
 import '../../habits/domain/models.dart';
@@ -71,7 +72,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         child: ListView(
           padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
           children: [
-            Text(l.tabProgress, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, height: 1.4)),
+            Text(l.tabProgress, style: context.text.title),
             const SizedBox(height: 14),
             Segmented<HabitType?>(
               value: _filter,

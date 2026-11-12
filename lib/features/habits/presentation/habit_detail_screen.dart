@@ -10,6 +10,9 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/clock.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/chips.dart';
 import '../../../core/widgets/common.dart';
 import '../../settings/application/settings_controller.dart';
 import '../application/habits_controller.dart';
@@ -91,10 +94,10 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(h.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, height: 1.4)),
+                      Text(h.name, style: context.text.heading),
                       Wrap(spacing: 6, runSpacing: 4, children: [
-                        Chip2(h.isGood ? l.build : l.avoid, bg: a.soft, fg: a.text, bold: true),
-                        Chip2(freqLine),
+                        TintBadge(label: h.isGood ? l.build : l.avoid, bg: a.soft, fg: a.text, large: true),
+                        TintBadge(label: freqLine, bg: c.field, fg: c.textSecondary, large: true),
                       ]),
                     ],
                   ),
@@ -106,9 +109,11 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
               Text('«${h.note}»', style: TextStyle(fontSize: 14, color: c.sub, fontStyle: FontStyle.italic)),
             ],
             const SizedBox(height: 16),
-            // ---- streak card ----
+            // ---- streak card (hero) ----
             AppCard(
-              padding: const EdgeInsets.all(20),
+              color: c.hero,
+              radius: AppRadii.hero,
+              padding: const EdgeInsets.all(AppSpacing.cardPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -119,7 +124,7 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text('${s.currentStreak}',
-                              style: TextStyle(fontFamily: kLatinFont, fontSize: 80, fontWeight: FontWeight.w700, height: 1, letterSpacing: -2, color: c.text)),
+                              style: context.text.amount.copyWith(fontSize: 80, height: 1)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -198,7 +203,7 @@ class _MiniStat extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-        decoration: BoxDecoration(color: c.chip, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(color: c.heroChip, borderRadius: BorderRadius.circular(18)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

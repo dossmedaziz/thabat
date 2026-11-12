@@ -655,5 +655,53 @@
         "type": "String"
       }
     }
-  }
+  },
+  "continueWithEmail": "المتابعة بالبريد الإلكتروني",
+  "orDivider": "أو",
+  "emailTitle": "الدخول بالبريد الإلكتروني",
+  "emailSubtitle": "سنرسل لك رمز تحقق. إن لم يكن لديك حساب، سننشئه لك تلقائيًا.",
+  "emailLabel": "البريد الإلكتروني",
+  "emailInvalid": "اكتب بريدًا إلكترونيًا صحيحًا",
+  "sendCode": "إرسال الرمز",
+  "codeTitle": "أدخل رمز التحقق",
+  "codeSentTo": "أرسلنا رمزًا إلى {email}. إن لم تجده، تحقق من مجلد الرسائل غير المرغوب فيها.",
+  "@codeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "codeLabel": "رمز التحقق",
+  "codeRequired": "اكتب الرمز الذي وصلك",
+  "verifyCode": "تأكيد والدخول",
+  "resendCode": "إعادة إرسال الرمز",
+  "resendIn": "إعادة الإرسال بعد {seconds} ث",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "changeEmail": "تغيير البريد",
+  "codeResent": "أرسلنا رمزًا جديدًا.",
+  "codeInvalid": "الرمز غير صحيح أو انتهت صلاحيته.",
+  "codeRateLimited": "طلبات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
+  "emailNotAuthorized": "تعذّر إرسال الرمز إلى هذا البريد حاليًا. جرّب لاحقًا أو استخدم Google.",
+  "signedInWithEmail": "مسجّل الدخول بالبريد الإلكتروني",
+  "todayProgress": "تقدّم اليوم",
+  "ofTotal": "من {total}",
+  "@ofTotal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "allDoneToday": "أنجزت كل عادات اليوم",
+  "colorGreen": "أخضر",
+  "colorOrange": "برتقالي",
+  "colorRed": "أحمر",
+  "colorYellow": "أصفر"
 }

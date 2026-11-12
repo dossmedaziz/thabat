@@ -5,6 +5,10 @@ import '../../../core/l10n/l10n_x.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/common.dart';
 import '../../habits/application/habits_controller.dart';
 import '../domain/achievements.dart';
@@ -32,10 +36,12 @@ class AchievementsScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
           children: [
-            Text(l.tabAchievements, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, height: 1.4)),
+            Text(l.tabAchievements, style: context.text.title),
             const SizedBox(height: 14),
             AppCard(
-              padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 18, 18),
+              color: c.hero,
+              radius: AppRadii.hero,
+              padding: const EdgeInsets.all(AppSpacing.cardPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -48,7 +54,7 @@ class AchievementsScreen extends ConsumerWidget {
                   ])),
                   Text(next == null ? l.allUnlocked : l.nextBadge(badgeInfo(l, next).name), style: TextStyle(fontSize: 13, color: c.sub)),
                   const SizedBox(height: 12),
-                  DirectionalBar(value: open.length / total, color: c.gold, track: c.track),
+                  DirectionalBar(value: open.length / total, color: c.gold, track: c.heroChip),
                 ],
               ),
             ),
@@ -159,7 +165,7 @@ class _BadgeTile extends StatelessWidget {
       button: true,
       label: '${info.name}${unlocked ? '' : '، ${l.lockedA11y}'}',
       child: AppCard(
-        color: unlocked ? c.card : c.chip,
+        color: c.card,
         padding: const EdgeInsetsDirectional.fromSTEB(8, 14, 8, 12),
         onTap: () => _showDetails(context, info, unlocked),
         child: Column(
@@ -183,18 +189,17 @@ class _BadgeTile extends StatelessWidget {
   void _showDetails(BuildContext context, BadgeInfo info, bool unlocked) {
     final c = context.colors;
     final l = context.l10n;
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      builder: (ctx) => SafeArea(
+      builder: (ctx) => AppBottomSheet(
+        title: info.name,
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+          padding: const EdgeInsets.only(top: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               BadgeMedal(id: id, unlocked: unlocked, size: 96),
               const SizedBox(height: 14),
-              Text(info.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 6),
               Text(info.description, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, color: c.sub)),
               const SizedBox(height: 14),
               if (unlocked)
@@ -208,7 +213,7 @@ class _BadgeTile extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: 16),
-              SizedBox(width: double.infinity, child: FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(l.close))),
+              AppButton(label: l.close, variant: AppButtonVariant.secondary, onPressed: () => Navigator.pop(ctx)),
             ],
           ),
         ),

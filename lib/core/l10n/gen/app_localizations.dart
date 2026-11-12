@@ -1839,6 +1839,168 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{count} إشعارات مجدولة على هذا الجهاز'**
   String scheduledCount(String count);
+
+  /// No description provided for @continueWithEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتابعة بالبريد الإلكتروني'**
+  String get continueWithEmail;
+
+  /// No description provided for @orDivider.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو'**
+  String get orDivider;
+
+  /// No description provided for @emailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدخول بالبريد الإلكتروني'**
+  String get emailTitle;
+
+  /// No description provided for @emailSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنرسل لك رمز تحقق. إن لم يكن لديك حساب، سننشئه لك تلقائيًا.'**
+  String get emailSubtitle;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get emailLabel;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب بريدًا إلكترونيًا صحيحًا'**
+  String get emailInvalid;
+
+  /// No description provided for @sendCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الرمز'**
+  String get sendCode;
+
+  /// No description provided for @codeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رمز التحقق'**
+  String get codeTitle;
+
+  /// No description provided for @codeSentTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرسلنا رمزًا إلى {email}. إن لم تجده، تحقق من مجلد الرسائل غير المرغوب فيها.'**
+  String codeSentTo(String email);
+
+  /// No description provided for @codeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق'**
+  String get codeLabel;
+
+  /// No description provided for @codeRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الرمز الذي وصلك'**
+  String get codeRequired;
+
+  /// No description provided for @verifyCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد والدخول'**
+  String get verifyCode;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة إرسال الرمز'**
+  String get resendCode;
+
+  /// No description provided for @resendIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال بعد {seconds} ث'**
+  String resendIn(String seconds);
+
+  /// No description provided for @changeEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير البريد'**
+  String get changeEmail;
+
+  /// No description provided for @codeResent.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرسلنا رمزًا جديدًا.'**
+  String get codeResent;
+
+  /// No description provided for @codeInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرمز غير صحيح أو انتهت صلاحيته.'**
+  String get codeInvalid;
+
+  /// No description provided for @codeRateLimited.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات كثيرة. انتظر قليلًا ثم حاول مجددًا.'**
+  String get codeRateLimited;
+
+  /// No description provided for @emailNotAuthorized.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إرسال الرمز إلى هذا البريد حاليًا. جرّب لاحقًا أو استخدم Google.'**
+  String get emailNotAuthorized;
+
+  /// No description provided for @signedInWithEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسجّل الدخول بالبريد الإلكتروني'**
+  String get signedInWithEmail;
+
+  /// No description provided for @todayProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدّم اليوم'**
+  String get todayProgress;
+
+  /// No description provided for @ofTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {total}'**
+  String ofTotal(String total);
+
+  /// No description provided for @allDoneToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنجزت كل عادات اليوم'**
+  String get allDoneToday;
+
+  /// No description provided for @colorGreen.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخضر'**
+  String get colorGreen;
+
+  /// No description provided for @colorOrange.
+  ///
+  /// In ar, this message translates to:
+  /// **'برتقالي'**
+  String get colorOrange;
+
+  /// No description provided for @colorRed.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحمر'**
+  String get colorRed;
+
+  /// No description provided for @colorYellow.
+  ///
+  /// In ar, this message translates to:
+  /// **'أصفر'**
+  String get colorYellow;
 }
 
 class _AppLocalizationsDelegate

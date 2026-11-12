@@ -57,7 +57,7 @@ import '../domain/models.dart';
     );
   }
 
-  const good = '#14A383', blue = '#3B7BE8', purple = '#8B5CF6', amber = '#E8A317', coral = '#F0715A', pink = '#E55A96';
+  const good = '#6EE7B7', blue = '#93C5FD', purple = '#C4B5FD', amber = '#FDE68A', coral = '#FCA5A5', pink = '#F9A8D4';
 
   // ---- Good habits ----
   final water = make(

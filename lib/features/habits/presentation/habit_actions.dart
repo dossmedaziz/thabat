@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../../../core/l10n/l10n_x.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/common.dart';
 import '../application/habits_controller.dart';
 import '../domain/habit_stats.dart';
@@ -38,32 +41,21 @@ class HabitActions {
   Future<void> confirmSlip(Habit h, HabitStats s) async {
     final l = context.l10n;
     final c = context.colors;
-    final ok = await showModalBottomSheet<bool>(
+    final ok = await showAppBottomSheet<bool>(
       context: context,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l.slipConfirmTitle(h.name), style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              Text(l.slipConfirmBody, style: TextStyle(fontSize: 15, color: c.sub)),
-              const SizedBox(height: 20),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: c.bad, foregroundColor: c.onBad),
-                onPressed: () => Navigator.pop(ctx, true),
-                child: Text(l.slipConfirmYes),
-              ),
-              const SizedBox(height: 8),
-              TextButton(
-                style: TextButton.styleFrom(foregroundColor: c.sub),
-                onPressed: () => Navigator.pop(ctx, false),
-                child: Text(l.cancel),
-              ),
-            ],
-          ),
+      builder: (ctx) => AppBottomSheet(
+        title: l.slipConfirmTitle(h.name),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 4),
+            Text(l.slipConfirmBody, textAlign: TextAlign.center, style: ctx.text.bodyMedium.copyWith(color: c.sub, height: 1.7)),
+            const SizedBox(height: 20),
+            AppButton(label: l.slipConfirmYes, variant: AppButtonVariant.danger, onPressed: () => Navigator.pop(ctx, true)),
+            const SizedBox(height: 10),
+            AppButton(label: l.cancel, variant: AppButtonVariant.secondary, onPressed: () => Navigator.pop(ctx, false)),
+          ],
         ),
       ),
     );
@@ -98,24 +90,31 @@ class HabitActions {
   }
 }
 
-/// Simple confirmation dialog.
+/// Confirmation as a bottom sheet (Cashflow): title, message, danger + cancel pills.
 Future<bool> confirmDialog(BuildContext context,
     {required String title, required String body, required String confirm, bool destructive = true}) async {
   final c = context.colors;
   final l = context.l10n;
-  final r = await showDialog<bool>(
+  final r = await showAppBottomSheet<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
-      content: Text(body),
-      actions: [
-        TextButton(style: TextButton.styleFrom(foregroundColor: c.sub), onPressed: () => Navigator.pop(ctx, false), child: Text(l.cancel)),
-        TextButton(
-          style: TextButton.styleFrom(foregroundColor: destructive ? c.badText : c.goodText),
-          onPressed: () => Navigator.pop(ctx, true),
-          child: Text(confirm),
-        ),
-      ],
+    builder: (ctx) => AppBottomSheet(
+      title: title,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 4),
+          Text(body, textAlign: TextAlign.center, style: ctx.text.bodyMedium.copyWith(color: c.sub, height: 1.7)),
+          const SizedBox(height: 20),
+          AppButton(
+            label: confirm,
+            variant: destructive ? AppButtonVariant.danger : AppButtonVariant.primary,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+          const SizedBox(height: 10),
+          AppButton(label: l.cancel, variant: AppButtonVariant.secondary, onPressed: () => Navigator.pop(ctx, false)),
+        ],
+      ),
     ),
   );
   return r ?? false;
